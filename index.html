@@ -329,8 +329,50 @@ td.nw{white-space:nowrap}
 table.sv input{width:100%;min-width:120px}
 .selsave[hidden]{display:none!important}
 
+/* ---- mobile top bar + slide-in menu ---- */
+#mbar,#navBackdrop{display:none}
+.navlv{padding:14px 8px 4px;display:flex;flex-direction:column;gap:6px}
+.navlv-h{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:2px}
+.navlv-r{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);font-size:13px}
+.navlv-r .bar{flex:1;height:6px;margin:0;display:block}
+.navlv-r b{min-width:38px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px}
+@media (max-width:860px){
+  :root{--mbar-h:56px}
+  #mbar{display:flex;align-items:center;gap:8px;position:fixed;top:0;left:0;right:0;z-index:150;background:var(--panel);border-bottom:1px solid var(--line);
+    padding:env(safe-area-inset-top,0px) max(10px, env(safe-area-inset-right,0px)) 0 max(6px, env(safe-area-inset-left,0px));height:calc(var(--mbar-h) + env(safe-area-inset-top,0px));box-sizing:border-box}
+  #menuBtn{flex:none;width:44px;height:44px;padding:0;border:none;background:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;border-radius:10px}
+  #menuBtn span{display:block;width:22px;height:2px;border-radius:2px;background:var(--ink);transition:transform .2s,opacity .2s}
+  body.drawer-open #menuBtn span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  body.drawer-open #menuBtn span:nth-child(2){opacity:0}
+  body.drawer-open #menuBtn span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  #mbar .mtitle{flex:1;min-width:0;font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #mSlot{flex:none;min-width:0}
+  #mSlot .profchip{padding:0;position:static!important;transform:none!important;box-shadow:none!important;background:none!important;border:none!important}
+  #mSlot .profchip .ver,#mSlot .langbar .pinb{display:none}
+  #mSlot .langbar{font-size:0;gap:3px}#mSlot .langbar .lb{font-size:12px;padding:4px 8px;min-height:32px}
+  #shell{display:block}
+  main{padding-top:calc(var(--mbar-h) + env(safe-area-inset-top,0px) + 14px)!important}
+  #nav{position:fixed!important;top:0;bottom:0;left:0;width:min(300px,84vw);height:auto;z-index:200;transform:translateX(-105%);transition:transform .25s ease;
+    display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;border-right:1px solid var(--line);border-bottom:none;box-shadow:none;
+    padding:calc(env(safe-area-inset-top,0px) + 16px) 12px calc(env(safe-area-inset-bottom,0px) + 16px) max(12px, env(safe-area-inset-left,0px))}
+  body.drawer-open #nav{transform:none;box-shadow:6px 0 24px rgba(0,0,0,.22)}
+  #nav nav{display:block;overflow:visible}
+  #nav nav a{white-space:normal;font-size:16px;padding:11px 10px}
+  #nav .brand{display:flex}
+  #nav .navfoot{display:block;order:0;padding:14px 8px 0;font-size:12px;margin-top:auto}
+  #nav .navfoot .nf-x{display:block}#nav .navfoot .bar{display:block}
+  #navBackdrop{display:block;position:fixed;inset:0;z-index:190;background:rgba(0,0,0,.38)}
+  #navBackdrop[hidden]{display:none}
+  body.drawer-open{overflow:hidden}
+  .mk-head{top:calc(var(--mbar-h) + env(safe-area-inset-top,0px))}
+  #toast{z-index:300}
+}
+@media (max-width:380px){#mbar .mtitle{font-size:14px}#mSlot .langbar .lb{padding:4px 6px}}
+
 </style>
 
+<header id="mbar"><button type="button" id="menuBtn" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button><span class="mtitle notr" id="mTitle">Deutsch A1–B2</span><span id="mSlot"></span></header>
+<div id="navBackdrop" hidden></div>
 <div id="shell">
   <aside id="nav">
     <div class="brand"><span class="flag">+</span><div><b>Deutsch A1–B2</b><small>Einbürgerung ZH · SZ · ZG</small></div></div>
@@ -349,6 +391,7 @@ table.sv input{width:100%;min-width:120px}
       <a href="#/settings" data-r="settings"><i>⚙</i>Einstellungen</a>
     </nav>
     <div id="profChip" class="profchip"></div>
+    <div class="navlv" id="navLv"></div>
     <div class="navfoot" id="navfoot"></div>
   </aside>
   <main id="main"><div class="loading">Lade…</div><noscript><div class="card" style="max-width:560px;margin:20px 0"><h3>Diese Vorschau kann die App nicht starten</h3><p>Sie sehen die Datei in einer Vorschau (z. B. pCloud- oder Dateien-App auf dem iPhone), die keine Programme ausführt. Bitte die Datei in einem Browser öffnen – oder den Online-Link verwenden.</p><p class="small muted">This preview cannot run the app (e.g. the pCloud or Files app on iPhone). Please open the file in a browser, or use the online link.</p></div></noscript></main>
@@ -493,7 +536,7 @@ patterns:[
 [/^Selbsteinschätzung Teil (\d+)$/,'Self-assessment part $1'],
 [/^ Wörter \(Ziel ca\. (\d+); unter (\d+) = 0 Punkte\)$/,' words (target approx. $1; below $2 = 0 points)'],
 [/^Deshalb liest der Browser den deutschen Text mit einer englischen Stimme vor – die Aussprache ist dann falsch\.$/,'So the browser reads the German text with an English voice – the pronunciation is then wrong.'],
-[/^Handy: „📦 Audio-Pakete“ tippen und die 9 Dateien Audio-Paket-1…9\.dta aus dem Ordner German › App › Audio \(pCloud\) wählen – alle auf einmal oder nacheinander\. Sie werden einmalig auf dem Handy gespeichert \(ca\. 200 MB\) und funktionieren danach auch offline\.$/,'Phone: tap “📦 Audio packs” and choose the 9 files Audio-Paket-1…9.dta from German › App › Audio (pCloud) – all at once or one after another. They are stored on the phone once (about 200 MB) and then work offline too.'],
+[/^Handy: „📦 Audio-Pakete“ tippen und die 8 Dateien Audio-Paket-1…8\.dta aus dem Ordner German › App › Audio \(pCloud\) wählen – alle auf einmal oder nacheinander\. Sie werden einmalig auf dem Handy gespeichert \(ca\. 200 MB\) und funktionieren danach auch offline\.$/,'Phone: tap “📦 Audio packs” and choose the 8 files Audio-Paket-1…8.dta from German › App › Audio (pCloud) – all at once or one after another. They are stored on the phone once (about 200 MB) and then work offline too.'],
 [/^📦 (\d+)\/(\d+) Audio-Pakete auf diesem Gerät gespeichert(.*)$/,'📦 $1/$2 audio packs saved on this device$3'],
 [/^⚠ Audio-Dateien nicht gefunden\. Auf dem Handy: unten „📦 Audio-Pakete“ wählen\. Am Computer: App\/Deutsch-Trainer\.html im Ordner „German“ öffnen\.$/,'⚠ Audio files not found. On the phone: choose “📦 Audio packs” below. On the computer: open App/Deutsch-Trainer.html in the “German” folder.'],
 [/^Niveau (\w+) freigeschaltet!$/,'Level $1 unlocked!'],
@@ -561,6 +604,7 @@ window.I18N.patterns.push(
 [/^(\d+) Wörter fällig$/,'$1 words due'],[/^(\d+) Fehler fällig$/,'$1 mistakes due'],[/^(\d+) gemerkt$/,'$1 saved'],
 [/^(\d+)\/(\d+) Einheiten$/,'$1/$2 units'],[/^Merkliste üben \((\d+)\)$/,'Practise saved words ($1)'],[/^Fortschritt (\w+)$/,'Progress $1'],[/^✓ (\w+) bestanden!$/,'✓ $1 passed!']);
 Object.assign(window.I18N.dict,{'Deutsch, z. B. die Gemeinde':'German, e.g. die Gemeinde','Englisch (optional)':'English (optional)','Übersetzung…':'Translation…','Bestehen (≥ 80 %) markiert das Niveau als bestanden.':'Passing (≥ 80 %) marks the level as passed.'});
+window.I18N.patterns.push([/^Veraltete Datei\(en\): (.+) – bitte die aktuellen Dateien aus German › App › Audio wählen \(8 Pakete\)\.$/,'Outdated file(s): $1 – please choose the current files from German › App › Audio (8 packs).']);
 
 /* English versions of explanatory content (rules, grammar explanations, task instructions, exam info).
    German example sentences and forms are kept on purpose – they are what you learn. */
@@ -5346,9 +5390,22 @@ document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#/"]');
 function route(){document.onkeydown=null;main().onclick=null;main().onkeydown=null;stopSay();
   let h=CUR||'home';const [r,...args]=h.split('/');
   $$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.r===r||(r==='unit'&&a.dataset.r==='path')));
-  (R[r]||R.home)(...args);window.scrollTo(0,0);}
+  (R[r]||R.home)(...args);window.scrollTo(0,0);drawer(false);mbarTitle();}
 window.addEventListener('hashchange',()=>{const h=decR(location.hash.slice(1));if(h&&h!==CUR){CUR=h;route()}});
-function renderNavFoot(){const h=S.history[today()]||{xp:0};$('#navfoot').innerHTML=`<div class="nf-x"><div><span class="flame ${streak()?'lit':''}">🔥</span> Serie: <b>${streak()}</b> Tag(e)</div><div>Heute: <b>${h.xp}</b> / ${S.settings.goalXP} XP</div><div class="bar" style="margin-top:6px"><i style="width:${Math.min(100,h.xp/S.settings.goalXP*100)}%"></i></div></div>`}
+/* mobile: top bar with ☰ and a slide-in menu from the left */
+const MOB=window.matchMedia?matchMedia('(max-width:860px)'):{matches:false,addEventListener(){}};
+function drawer(open){const on=!!open&&MOB.matches;document.body.classList.toggle('drawer-open',on);const bd=$('#navBackdrop');if(bd)bd.hidden=!on;const b=$('#menuBtn');if(b){b.setAttribute('aria-expanded',on);b.setAttribute('aria-label',on?'Menü schliessen':'Menü öffnen')}}
+function mbarTitle(){const t=$('#mTitle');if(!t)return;const a=$('#nav nav a.on');t.textContent=a?[...a.childNodes].filter(n=>!(n.nodeType===1&&(n.tagName==='I'||n.classList.contains('badge')))).map(n=>n.textContent).join('').replace(/\s*\([^)]*\)\s*$/,'').trim():'Deutsch A1–B2'}
+function placeChip(){const c=$('#profChip'),slot=$('#mSlot'),nav=$('#nav');if(!c||!slot||!nav)return;
+  if(MOB.matches){if(c.parentNode!==slot)slot.appendChild(c)}else if(c.parentNode!==nav){nav.insertBefore(c,$('#navLv')||$('#navfoot'))}}
+function initDrawer(){const b=$('#menuBtn');if(!b||b._init)return;b._init=1;
+  b.onclick=()=>drawer(!document.body.classList.contains('drawer-open'));
+  $('#navBackdrop').onclick=()=>drawer(false);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('drawer-open'))drawer(false)});
+  $('#nav').addEventListener('click',e=>{if(e.target.closest('a'))setTimeout(()=>drawer(false),0)});
+  let x0=null;const nav=$('#nav');nav.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});nav.addEventListener('touchend',e=>{if(x0!=null&&e.changedTouches[0].clientX-x0<-60)drawer(false);x0=null},{passive:true});
+  const ch=()=>{placeChip();if(!MOB.matches)drawer(false)};try{MOB.addEventListener('change',ch)}catch(e){try{MOB.addListener(ch)}catch(x){}}placeChip();mbarTitle()}
+function renderNavFoot(){const lv=$('#navLv');if(lv)lv.innerHTML=`<div class="navlv-h">Fortschritt</div>${LEVELS.map(l=>{const p=Math.round(levelProg(l)*100);return `<a href="#/path/${l}" class="navlv-r"><span class="lvl">${l}</span><span class="bar ok"><i style="width:${p}%"></i></span><b>${p} %</b></a>`}).join('')}`;const h=S.history[today()]||{xp:0};$('#navfoot').innerHTML=`<div class="nf-x"><div><span class="flame ${streak()?'lit':''}">🔥</span> Serie: <b>${streak()}</b> Tag(e)</div><div>Heute: <b>${h.xp}</b> / ${S.settings.goalXP} XP</div><div class="bar" style="margin-top:6px"><i style="width:${Math.min(100,h.xp/S.settings.goalXP*100)}%"></i></div></div>`}
 
 /* HOME */
 R.home=function(){
@@ -5557,25 +5614,28 @@ function unitTracksHTML(u){const tr=[];(LISTEN.groups||[]).forEach(g=>g.tracks.f
 const AUDIO={};let TRANSCRIPTS_LOADED=false;
 /* audio packs (Audio-Paket-N.dta): compressed book audio for phones, cached in IndexedDB */
 const PK={of:0,have:new Set(),cached:false};
+const PACK_OF=8; /* current pack set: Audio-Paket-1…8.dta (older 7- or 9-pack sets are rejected) */
 function pkDB(){return new Promise((res,rej)=>{const r=indexedDB.open('dt-audio',1);r.onupgradeneeded=()=>r.result.createObjectStore('p');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function pkParse(blob){const hd=await blob.slice(0,12).arrayBuffer();const u=new Uint8Array(hd);if(String.fromCharCode(...u.slice(0,8))!=='DTAUDIO1')throw new Error('nopack');
-  const hl=new DataView(hd).getUint32(8,true);const h=JSON.parse(await blob.slice(12,12+hl).text());const base=12+hl;
+  const hl=new DataView(hd).getUint32(8,true);const h=JSON.parse(await blob.slice(12,12+hl).text());const base=12+hl;if(h.of!==PACK_OF)throw new Error('oldpack');
   h.files.forEach(f=>{if(AUDIO[f.n])URL.revokeObjectURL(AUDIO[f.n]);AUDIO[f.n]=URL.createObjectURL(new Blob([blob.slice(base+f.o,base+f.o+f.l)],{type:'audio/mpeg'}))});
   if(h.transcripts)mergeTranscripts(h.transcripts);if(h.exam_b1)window.EXAM_B1=h.exam_b1;PK.of=h.of;PK.have.add(h.pack);return h}
 async function pkStore(key,blob){try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}
   try{const d=await pkDB();await new Promise((r,j)=>{const t=d.transaction('p','readwrite');t.objectStore('p').put(blob,key);t.oncomplete=r;t.onerror=()=>j(t.error);t.onabort=()=>j(t.error)});PK.cached=true;return true}catch(e){return false}}
-async function pkLoadAll(){try{const d=await pkDB();const all=await new Promise(r=>{const out=[];const q=d.transaction('p').objectStore('p').openCursor();q.onsuccess=()=>{const c=q.result;if(c){out.push(c.value);c.continue()}else r(out)};q.onerror=()=>r(out)});
-  for(const b of all){try{await pkParse(b);PK.cached=true}catch(e){}}if(all.length&&/^listen|^speak|^mock/.test(CUR||''))route()}catch(e){}}
+async function pkLoadAll(){try{const d=await pkDB();const all=await new Promise(r=>{const out=[];const q=d.transaction('p').objectStore('p').openCursor();q.onsuccess=()=>{const c=q.result;if(c){out.push([c.key,c.value]);c.continue()}else r(out)};q.onerror=()=>r(out)});
+  const old=[];for(const [k,b] of all){try{await pkParse(b);PK.cached=true}catch(e){if(e&&e.message==='oldpack')old.push(k)}}
+  if(old.length){try{const t=d.transaction('p','readwrite');old.forEach(k=>t.objectStore('p').delete(k))}catch(e){}}if(all.length&&/^listen|^speak|^mock/.test(CUR||''))route()}catch(e){}}
 function pkStatus(){return PK.have.size?`📦 ${PK.have.size}/${PK.of} Audio-Pakete ${PK.cached?'auf diesem Gerät gespeichert':'geladen (nur für diese Sitzung)'}`:''}
 const AUD_BASE=(()=>{try{return /\/app\/[^\/]*$/i.test(decodeURIComponent(location.pathname))?'../':''}catch(e){return ''}})();
 function audioURL(path){const b=path.split('/').pop();if(AUDIO[b])return AUDIO[b];return AUD_BASE+path.split('/').map(encodeURIComponent).join('/')}
 function hasAudio(path){return !!AUDIO[path.split('/').pop()]}
 function pickerHTML(){return `<div class="card" style="margin:12px 0"><b>Audio aus Ihren Büchern laden</b><p class="small muted" style="margin:6px 0 10px">${IN_VIEWER?'In der Web-Version liegen die Originalaudios nicht online. Wählen Sie den Ordner „German“ (Computer) oder die MP3-Dateien (Handy, z. B. aus OneDrive/iCloud/Dateien). Liegt <i>trainer/data/listening.js</i> dabei, werden auch die Transkripte und Lückentexte freigeschaltet. Die Dateien bleiben auf Ihrem Gerät.':'Falls die Audios nicht gefunden werden: Ordner „German“ oder einzelne MP3-Dateien wählen.'}</p>
  <div class="row"><label class="btn pri">Ordner wählen<input type="file" id="pkDir" webkitdirectory multiple style="display:none"></label><label class="btn">Dateien wählen<input type="file" id="pkFiles" multiple accept="audio/*,.mp3,.js" style="display:none"></label><label class="btn">📦 Audio-Pakete (Handy)<input type="file" id="pkPack" multiple style="display:none"></label><span class="small muted" id="pkStat">${PK.have.size?pkStatus():Object.keys(AUDIO).length?Object.keys(AUDIO).length+' Audiodateien geladen'+(TRANSCRIPTS_LOADED?' · Transkripte geladen':''):''}</span></div>
- <p class="small muted" style="margin:10px 0 0"><b>Handy:</b> „📦 Audio-Pakete“ tippen und die 9 Dateien <i>Audio-Paket-1…9.dta</i> aus dem Ordner <i>German › App › Audio</i> (pCloud) wählen – alle auf einmal oder nacheinander. Sie werden einmalig auf dem Handy gespeichert (ca. 200 MB) und funktionieren danach auch offline.</p></div>`}
-function bindPicker(after){const h=async e=>{const fs=[...e.target.files];let n=0,np=0,stored=true;const st=$('#pkStat');for(const f of fs){const nm=f.name;
-   if(/\.dta$/i.test(nm)||(!/\.(mp3|js)$/i.test(nm)&&f.size>1e6)){if(st)st.textContent='Lade '+nm+' …';try{const b=new Blob([await f.arrayBuffer()],{type:'application/octet-stream'});const h=await pkParse(b);np++;n+=h.files.length;if(!(await pkStore('pack'+h.pack,b)))stored=false}catch(x){toast('Keine gültige Audio-Paket-Datei: '+nm)}continue}
+ <p class="small muted" style="margin:10px 0 0"><b>Handy:</b> „📦 Audio-Pakete“ tippen und die 8 Dateien <i>Audio-Paket-1…8.dta</i> aus dem Ordner <i>German › App › Audio</i> (pCloud) wählen – alle auf einmal oder nacheinander. Sie werden einmalig auf dem Handy gespeichert (ca. 200 MB) und funktionieren danach auch offline.</p></div>`}
+function bindPicker(after){const h=async e=>{const fs=[...e.target.files];let n=0,np=0,stored=true;const oldn=[];const st=$('#pkStat');for(const f of fs){const nm=f.name;
+   if(/\.dta$/i.test(nm)||(!/\.(mp3|js)$/i.test(nm)&&f.size>1e6)){if(st)st.textContent='Lade '+nm+' …';try{const b=new Blob([await f.arrayBuffer()],{type:'application/octet-stream'});const h=await pkParse(b);np++;n+=h.files.length;if(!(await pkStore('pack'+h.pack,b)))stored=false}catch(x){if(x&&x.message==='oldpack'){oldn.push(nm)}else toast('Keine gültige Audio-Paket-Datei: '+nm)}continue}
    if(/\.mp3$/i.test(nm)){if(AUDIO[nm])URL.revokeObjectURL(AUDIO[nm]);AUDIO[nm]=URL.createObjectURL(f);n++}else if(nm==='listening.js'){try{const t=await f.text();const d=JSON.parse(t.replace(/^\s*window\.LISTEN\s*=\s*/,'').replace(/;\s*$/,''));mergeTranscripts(d)}catch(x){toast('Transkripte konnten nicht gelesen werden.')}}}
+   if(oldn.length){toast('Veraltete Datei(en): '+oldn.join(', ')+' – bitte die aktuellen Dateien aus German › App › Audio wählen (8 Pakete).');after&&after();return}
    if(np){toast(pkStatus()+(PK.have.size<PK.of?' – bitte noch die übrigen Pakete wählen.':' ✓')+(stored?'':' (Speichern auf dem Gerät nicht möglich – beim nächsten Mal erneut wählen.)'))}else toast(n+' Audiodateien geladen'+(TRANSCRIPTS_LOADED?' · Transkripte freigeschaltet':''));after&&after()};
   ['pkDir','pkFiles','pkPack'].forEach(id=>{const el=document.getElementById(id);if(el)el.onchange=h})}
 function mergeTranscripts(d){const map={};(d.groups||[]).forEach(g=>g.tracks.forEach(t=>map[t.id]=t.text));(d.aussprache||[]).forEach(a=>a.tracks.forEach(t=>map[t.id]=t.text));
@@ -5802,7 +5862,7 @@ function profName(){return ''}
 /* single account. Earlier versions had two profiles (p1/p2) on a device: take over the one with the most progress */
 function loadProfilesLocal(){try{if(lsGet(KEY))return;let best=null,bs=-1;for(const id of ['p1','p2']){const raw=lsGet(KEY+'.'+id);if(!raw)continue;try{const d=JSON.parse(raw);const sc=Object.keys(d.history||{}).length*1000+(d.ts||0)/1e9;if(sc>bs){bs=sc;best=raw}}catch(e){}}
   if(best){lsSet(KEY,best)}}catch(e){}}
-const APP_VER='2026-11-08a';
+const APP_VER='2026-11-08d';
 function isPinned(){return lsGet('dt.pin')==='1'}
 /* keep the pinned bar on screen even where position:fixed is not honoured (phone keyboard open, zoom, some in-app viewers):
    measure where it really is and shift it back into the visible area */
@@ -5844,7 +5904,7 @@ function U(x){const en=I18.units[x];if(!en)return esc(x);const l=LANG();return l
 /* keep the reader's place when the language is switched */
 const ANCH_SEL='.thx,h1,h2,h3,h4,p,li,tr,.ex,.card,details,table,.unitrow,.qcard,.fb,.readtext p,.transcript';
 function anchEls(){return [...main().querySelectorAll(ANCH_SEL)].filter(e=>!e.closest('.tr-en-block')&&!(e.parentElement&&e.parentElement.closest('.thx')))}
-function anchLine(){const n=document.getElementById('nav');if(n&&getComputedStyle(n).position==='sticky'){const b=n.getBoundingClientRect().bottom;if(b>0&&b<innerHeight/2)return b+4}return 8}
+function anchLine(){const mb=document.getElementById('mbar');if(mb&&getComputedStyle(mb).display!=='none'){const b=mb.getBoundingClientRect().bottom;if(b>0&&b<innerHeight/2)return b+4}const n=document.getElementById('nav');if(n&&getComputedStyle(n).position==='sticky'){const b=n.getBoundingClientRect().bottom;if(b>0&&b<innerHeight/2)return b+4}return 8}
 function scrollAnchor(){const L=anchLine();const els=anchEls();const open=[];els.forEach((e,i)=>{if(e.tagName==='DETAILS'&&e.open)open.push(i)});
   const a={y:scrollY,open,i:null};for(let i=0;i<els.length;i++){const r=els[i].getBoundingClientRect();if(r.height>0&&r.bottom>L){a.i=i;a.top=r.top;if(els[i].classList.contains('thx')&&r.top<L)a.frac=(L-r.top)/r.height;break}}return a}
 function scrollRestore(a){const L=anchLine();const els=anchEls();a.open.forEach(i=>{const e=els[i];if(e&&e.tagName==='DETAILS')e.open=true});
@@ -5855,7 +5915,7 @@ function scrollRestore(a){const L=anchLine();const els=anchEls();a.open.forEach(
 function setLang(l){const inQuiz=!!document.querySelector('.quiz .qcard:not(.result)');const a=scrollAnchor();
   trReset();lsSet('dt.lang',l);if(S){S.settings.uiLang=l;save()}renderProfileChip();renderNavFoot();
   if(!inQuiz)route();   // during an exercise: translate in place, never restart the session
-  trApply(document.getElementById('shell'));scrollRestore(a)}
+  trApply(document.getElementById('shell'));try{mbarTitle()}catch(e){}scrollRestore(a)}
 function langSwitch(){const l=LANG();return `<div class="chips" role="group" aria-label="Sprache / Language">${[['de','Deutsch'],['both','Deutsch + English'],['en','English']].map(([k,n])=>`<span class="chip ${l===k?'on':''}" data-lang="${k}">${n}</span>`).join('')}</div>`}
 document.addEventListener('click',e=>{const c=e.target.closest('[data-lang]');if(c){e.preventDefault();setLang(c.dataset.lang);return}const pb=e.target.closest('[data-pin]');if(pb){e.preventDefault();const on=!isPinned();lsSet('dt.pin',on?'1':'0');renderProfileChip();toast(LANG()==='en'?(on?'📌 Language bar pinned – it stays visible while scrolling.':'Language bar unpinned.'):(on?'📌 Sprachleiste angeheftet – bleibt beim Scrollen sichtbar.':'Sprachleiste gelöst.'))}});
 const TR_SKIP='.qprompt,.opts,.tiles,.gram,.readtext,.transcript,.ex,.diff,.cloze,.flash,.fb .ans,textarea,input,select,.tr-en,.notr,.lvl,.kbd,.keys,.say,audio,script,style,.der,.die,.das';
@@ -6037,6 +6097,7 @@ function mockSpeak(){const E=window.EXAM_B1,P=E.sprechen,run=mockRun('sprechen')
 function mockSpeakTotal(crit,aus,run){const p=[1,2,3].map(n=>mockRubricPts('s'+n,crit,run,MK_SP_MAX[n])).concat([mockRubricPts('saus',aus,run,MK_SP_MAX.aus)]);return p.includes('–')?'–':p.reduce((a,b)=>a+b,0)}
 
 initSelSave&&document.readyState!=='loading'?initSelSave():document.addEventListener('DOMContentLoaded',()=>initSelSave());
+document.readyState!=='loading'?initDrawer():document.addEventListener('DOMContentLoaded',()=>initDrawer());
 /* boot */
 i18nBuild();loadProfilesLocal();load();applyTheme();updateBadge();renderNavFoot();renderProfileChip();CUR=decR(location.hash.slice(1))||'home';route();pkLoadAll();setTimeout(()=>BK.auto(),2500);
 window.__DT={S:()=>S,cards,UNITS,classify,check,parseItem,pluralOf,save};
