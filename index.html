@@ -304,6 +304,31 @@ button,.btn,.tile,.chip{touch-action:manipulation}
 @media (max-width:860px){.mk-head{top:0}.mk-rub{font-size:12px}.mk-rub button{min-width:28px;padding:3px 6px}}
 .lgroup{margin-bottom:10px}.lgroup>summary{cursor:pointer;padding:4px 0}.lgroup[open]>summary{margin-bottom:6px}
 
+/* level progress bar (shown during training) */
+.lvbar{display:flex;align-items:center;gap:10px;margin:8px 0 12px;font-size:14px}
+.lvbar .bar{flex:1;min-width:60px;height:10px;margin:0}
+.lvbar b{min-width:46px;text-align:right;font-variant-numeric:tabular-nums}
+.lvbar .lvbar-n{white-space:nowrap}
+.quiz>.lvbar{margin:-4px 0 12px}
+@media (max-width:640px){.lvbar .lvbar-n{display:none}}
+/* continue hero */
+.hero-cont{display:flex;gap:18px;align-items:center;flex-wrap:wrap;border:2px solid var(--accent);margin:16px 0 12px;padding:20px}
+.hero-cont .hc-l{flex:1;min-width:220px}
+.hero-cont .hc-t{margin:4px 0 2px;font-size:22px}
+button.big{font-size:20px;font-weight:700;padding:16px 32px;min-height:62px;border-radius:14px}
+@media (max-width:640px){.hero-cont button.big{width:100%}}
+.grid.sec{margin-bottom:16px}
+.card.mini{display:flex;flex-direction:column;gap:2px;padding:10px 14px}
+.card.mini b{font-size:15px}
+/* saved words */
+.star{background:none;border:none;font-size:20px;line-height:1;color:var(--muted);cursor:pointer;padding:2px 6px;vertical-align:middle;min-height:0}
+.star:hover{color:#d49a00}
+.star.on{color:#e0a100}
+td.nw{white-space:nowrap}
+.selsave{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:70;background:var(--accent);color:var(--accent-ink);border:none;border-radius:999px;padding:11px 18px;font-size:15px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.28);max-width:calc(100vw - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+table.sv input{width:100%;min-width:120px}
+.selsave[hidden]{display:none!important}
+
 </style>
 
 <div id="shell">
@@ -313,6 +338,7 @@ button,.btn,.tile,.chip{touch-action:manipulation}
       <a href="#/home" data-r="home"><i>⌂</i>Übersicht</a>
       <a href="#/path" data-r="path"><i>▤</i>Lernpfad</a>
       <a href="#/vocab" data-r="vocab"><i>◫</i>Wortschatz</a>
+      <a href="#/saved" data-r="saved"><i>☆</i>Merkliste</a>
       <a href="#/errors" data-r="errors"><i>⚑</i>Fehlertraining<span id="errBadge" class="badge"></span></a>
       <a href="#/listen" data-r="listen"><i>♪</i>Hören</a>
       <a href="#/speak" data-r="speak"><i>◉</i>Sprechen</a>
@@ -527,6 +553,14 @@ units:{
 'Formulare & Abläufe – Passiv (Einführung)':'Forms & procedures – passive (introduction)','Passiv Präsens: werden + Partizip II':'Present passive: werden + past participle','Passiv mit Modalverb (Basis)':'Passive with modal verb (basics)','man → Passiv':'man → passive','Abläufe beschreiben':'Describing procedures','Abläufe und Regeln verstehen (z. B. Abfallentsorgung, Formulare)':'understand procedures and rules (e.g. waste disposal, forms)','einfache Passivsätze bilden':'form simple passive sentences'
 }
 };
+Object.assign(window.I18N.dict,{'Hier haben Sie aufgehört':'This is where you left off','Ihr Kurs beginnt hier':'Your course starts here','Als Nächstes im Kurs':'Next in your course','▶ Weiter lernen':'▶ Continue learning','▶ Kurs starten':'▶ Start the course','▶ Zur Prüfung':'▶ Go to exam','Alle Einheiten abgeschlossen 🎉':'All units completed 🎉','Jetzt Niveautests und Prüfungstraining.':'Now level tests and exam training.',
+'↻ Wiederholen':'↻ Review','⚑ Fehler korrigieren':'⚑ Fix mistakes','☆ Merkliste':'☆ Saved words','Merkliste':'Saved words','Eigenes Wort hinzufügen':'Add your own word','Hinzufügen':'Add','Noch nichts gemerkt.':'Nothing saved yet.','▶ Alle vorlesen':'▶ Read all aloud','Gemerkt':'Saved','Merken':'Save','☆ Zur Merkliste hinzugefügt.':'☆ Added to saved words.','Aus der Merkliste entfernt.':'Removed from saved words.','Bitte ein deutsches Wort eingeben.':'Please enter a German word.','Eigenes Wort':'Own word',
+'Alle Einheiten sind offen – empfohlen ist die Reihenfolge von oben nach unten. Eine Einheit gilt als abgeschlossen bei ≥ 80 %.':'All units are open – the recommended order is top to bottom. A unit counts as completed at ≥ 80 %.','✓ Einheit abgeschlossen. Weiter mit der nächsten Einheit.':'✓ Unit completed. On to the next unit.'});
+window.I18N.patterns.push(
+[/^Abschnitt: (.+)$/,(m,a)=>'Section: '+({Grammatik:'Grammar',Beispiele:'Examples',Wortschatz:'Vocabulary','Üben':'Practice'}[a]||a)],
+[/^(\d+) Wörter fällig$/,'$1 words due'],[/^(\d+) Fehler fällig$/,'$1 mistakes due'],[/^(\d+) gemerkt$/,'$1 saved'],
+[/^(\d+)\/(\d+) Einheiten$/,'$1/$2 units'],[/^Merkliste üben \((\d+)\)$/,'Practise saved words ($1)'],[/^Fortschritt (\w+)$/,'Progress $1'],[/^✓ (\w+) bestanden!$/,'✓ $1 passed!']);
+Object.assign(window.I18N.dict,{'Deutsch, z. B. die Gemeinde':'German, e.g. die Gemeinde','Englisch (optional)':'English (optional)','Übersetzung…':'Translation…','Bestehen (≥ 80 %) markiert das Niveau als bestanden.':'Passing (≥ 80 %) marks the level as passed.'});
 
 /* English versions of explanatory content (rules, grammar explanations, task instructions, exam info).
    German example sentences and forms are kept on purpose – they are what you learn. */
@@ -5007,7 +5041,7 @@ function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.im
 /* ---------------- state ---------------- */
 const KEY='deutschTrainer.v1';
 const DEF={created:today(),settings:{swissSS:true,translit:false,freeNav:false,dailyNew:12,rate:0.95,voice:'',recLang:'de-DE',theme:'auto',goalXP:60,target:'B2'},
-  units:{},levels:{A1:{unlocked:true}},vocab:{},errors:[],history:{},listen:{},read:{},writing:{},speaking:[],accepted:{},lastBackup:null};
+  units:{},levels:{A1:{unlocked:true}},vocab:{},errors:[],history:{},listen:{},read:{},writing:{},speaking:[],accepted:{},lastBackup:null,saved:[],lastPos:null};
 let S;
 function load(){try{S=JSON.parse(localStorage.getItem(storeKey()))||null}catch(e){S=null}
   if(!S)S=JSON.parse(JSON.stringify(DEF));
@@ -5123,8 +5157,20 @@ function voiceHelpHTML(){const ua=navigator.userAgent;let how;
   else how='Installieren Sie in den Systemeinstellungen Ihres Geräts eine deutsche Sprachausgabe-Stimme und starten Sie den Browser neu.';
   return `<div class="fb warn small" id="vwarn"><b>Keine deutsche Stimme auf diesem Gerät gefunden.</b> Deshalb liest der Browser den deutschen Text mit einer englischen Stimme vor – die Aussprache ist dann falsch.<br>${how}</div>`}
 function voiceBanner(){if(!germanVoiceMissing()||$('#vwarn'))return;const m=main();if(m){m.insertAdjacentHTML('afterbegin',voiceHelpHTML());trApply&&trApply(m)}}
+let SAYGEN=0;
+function mkUtt(t,rate){const u=new SpeechSynthesisUtterance(String(t).replace(/___/g,'…'));u.lang='de-DE';const v=pickVoice();if(v){u.voice=v;u.lang=v.lang}u.rate=rate;return u}
+function stopSay(){SAYGEN++;try{if(window.speechSynthesis)speechSynthesis.cancel()}catch(e){}}
 function say(text,rate){if(!window.speechSynthesis){toast('Sprachausgabe wird von diesem Browser nicht unterstützt.');return}voiceBanner();
-  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text).replace(/___/g,'…'));u.lang='de-DE';const v=pickVoice();if(v){u.voice=v;u.lang=v.lang}u.rate=rate||S.settings.rate;speechSynthesis.speak(u);return u}
+  stopSay();const u=mkUtt(text,rate||S.settings.rate);speechSynthesis.speak(u);return u}
+/* Langsam: many (natural/online) voices ignore a lower rate, so slow mode also speaks in short chunks with pauses */
+function slowChunks(text){const t=String(text).replace(/___/g,'…').replace(/([.!?])\s+[–—-]\s+/g,'$1 ').replace(/\s+[–—-]\s+/g,', ').replace(/\s+/g,' ').trim();if(!t)return [];const words=t.split(' ');
+  if(words.length<=4)return words;const out=[];
+  for(const p of t.split(/(?<=[,;:.!?–])\s+/)){const w=p.split(' ');for(let i=0;i<w.length;i+=3)out.push(w.slice(i,i+3))}
+  const res=[];for(const c of out){if(c.length===1&&res.length&&!/[,;:.!?–]$/.test(res[res.length-1][res[res.length-1].length-1]))res[res.length-1].push(c[0]);else res.push(c)}
+  return res.map(c=>c.join(' '))}
+function saySlow(text){if(!window.speechSynthesis){toast('Sprachausgabe wird von diesem Browser nicht unterstützt.');return}voiceBanner();
+  stopSay();const g=SAYGEN,cs=slowChunks(text),rate=Math.max(0.5,Math.min(0.65,S.settings.rate*0.65));let i=0;
+  const next=()=>{if(g!==SAYGEN||i>=cs.length)return;const u=mkUtt(cs[i++],rate);let f=false;const go=()=>{if(f)return;f=true;setTimeout(next,420)};u.onend=go;u.onerror=go;speechSynthesis.speak(u)};next()}
 const IN_VIEWER=!!(window.claude&&typeof window.claude.use==='function');
 const REC=IN_VIEWER?null:(window.SpeechRecognition||window.webkitSpeechRecognition);
 function recognize(onInterim){return new Promise((res,rej)=>{if(!REC){rej(new Error('nosupport'));return}
@@ -5171,9 +5217,43 @@ function vocabStarted(level){return cards().filter(c=>(!level||c.level===level)&
 const levelUnits=l=>UNITS.filter(u=>u.level===l);
 function uState(id){return S.units[id]=S.units[id]||{best:0,att:0}}
 const unitDone=u=>(S.units[u.id]&&S.units[u.id].best>=0.8);
-function levelUnlocked(l){if(S.settings.freeNav)return true;const i=LEVELS.indexOf(l);if(i===0)return true;const L=S.levels[l];if(L&&L.unlocked)return true;const p=S.levels[LEVELS[i-1]];return !!(p&&p.passed)}
-function unitUnlocked(u){if(S.settings.freeNav)return true;if(!levelUnlocked(u.level))return false;const L=S.levels[u.level];if(L&&L.testedOut)return true;const us=levelUnits(u.level);const i=us.indexOf(u);return i===0||unitDone(us[i-1])||(S.units[u.id]&&S.units[u.id].att>0)}
-function currentUnit(){for(const l of LEVELS){if(!levelUnlocked(l))break;for(const u of levelUnits(l))if(!unitDone(u)&&unitUnlocked(u))return u}return null}
+function levelUnlocked(l){return true}
+function unitUnlocked(u){return true}
+function levelReached(l){const i=LEVELS.indexOf(l);if(i===0)return true;const L=S.levels[l];if(L&&L.unlocked)return true;const p=S.levels[LEVELS[i-1]];return !!(p&&p.passed)}
+function unitReached(u){if(!levelReached(u.level))return false;const L=S.levels[u.level];if(L&&L.testedOut)return true;const us=levelUnits(u.level);const i=us.indexOf(u);return i===0||unitDone(us[i-1])||(S.units[u.id]&&S.units[u.id].att>0)}
+function currentUnit(){for(const l of LEVELS){for(const u of levelUnits(l))if(!unitDone(u))return u}return null}
+function unitProg(u,ov){const st=S.units[u.id]||{};let b=st.best||0;if(ov&&ov[u.id]!=null)b=Math.max(b,ov[u.id]);return Math.min(1,b/0.8)}
+function levelProg(l,ov){const us=levelUnits(l);if(!us.length)return 0;return us.reduce((a,u)=>a+unitProg(u,ov),0)/us.length}
+function levelBarHTML(l,ov){const us=levelUnits(l||'');if(!us.length)return '';const p=levelProg(l,ov),dn=us.filter(unitDone).length;
+  return `<div class="lvbar" title="Fortschritt ${l}"><span class="lvl">${l}</span><div class="bar ok"><i style="width:${(p*100).toFixed(1)}%"></i></div><b>${Math.round(p*100)} %</b><span class="small muted lvbar-n">${dn}/${us.length} Einheiten</span></div>`}
+function ctxLevel(){const lp=S.lastPos&&unitById(S.lastPos.unit);return lp?lp.level:currentLevel()}
+const TABNAME={gram:'Grammatik',exs:'Beispiele',voc:'Wortschatz',prac:'Üben'};
+function continueTarget(){const lp=S.lastPos&&unitById(S.lastPos.unit);
+  if(lp){if(!unitDone(lp))return{u:lp,tab:S.lastPos.tab||'gram',resume:true};const i=UNITS.indexOf(lp);for(let k=i+1;k<UNITS.length;k++)if(!unitDone(UNITS[k]))return{u:UNITS[k],tab:'gram'}}
+  const u=currentUnit();return u?{u,tab:'gram',start:!lp&&!Object.keys(S.units).length}:null}
+/* saved words (Merkliste) */
+function savedKey(de){return 'w:'+String(de).replace(/\s+/g,' ').trim().toLowerCase()}
+function isSaved(de){const k=savedKey(de);return (S.saved||[]).some(x=>x.k===k)}
+function starBtn(de,en,src,cid){const on=isSaved(de);return `<button class="star ${on?'on':''}" data-star="${esc(de)}" data-sen="${esc(en||'')}" data-ssrc="${esc(src||'')}" data-scid="${esc(cid||'')}" title="${on?'Gemerkt':'Merken'}" aria-label="Merken">${on?'★':'☆'}</button>`}
+function toggleSaved(de,en,src,cid){de=String(de).replace(/\s+/g,' ').trim();if(!de)return false;S.saved=S.saved||[];const k=savedKey(de);const i=S.saved.findIndex(x=>x.k===k);
+  if(i>=0){S.saved.splice(i,1);save();return false}S.saved.push({k,de,en:en||'',src:src||'',cid:cid||'',at:today()});save();return true}
+function pageSrc(){const lp=(CUR||'').split('/');if(lp[0]==='unit'){const u=unitById(lp[1]);if(u)return u.level+' · '+u.title}if(lp[0]==='listen')return 'Hören';if(lp[0]==='read')return 'Lesen';if(lp[0]==='deck'){const d=VOCAB.find(x=>x.id===lp[1]);if(d)return d.level+' · '+d.theme}return ''}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-star]');if(!b)return;e.preventDefault();e.stopPropagation();
+  const on=toggleSaved(b.dataset.star,b.dataset.sen,b.dataset.ssrc||pageSrc(),b.dataset.scid);
+  $$('[data-star]').filter(x=>x.dataset.star===b.dataset.star).forEach(x=>{x.classList.toggle('on',on);x.textContent=on?'★':'☆';x.title=on?'Gemerkt':'Merken'});
+  toast(on?'☆ Zur Merkliste hinzugefügt.':'Aus der Merkliste entfernt.')},true);
+let SELTXT='';
+function selCheck(){const b=$('#selSave');if(!b)return;let t='',inMain=false;try{const sel=window.getSelection();t=sel?String(sel).replace(/\s+/g,' ').trim():'';inMain=!!(sel&&sel.rangeCount&&main()&&main().contains(sel.anchorNode))}catch(e){}
+  t=t.replace(/^[„“"'(\[]+|[“”"').,;:!?\]]+$/g,'');
+  if(t&&inMain&&t.length<=80&&t.split(' ').length<=8&&/[A-Za-zÄÖÜäöüß]/.test(t)){SELTXT=t;const on=isSaved(t);b.hidden=false;b.textContent=(on?'★ „':'☆ „')+(t.length>30?t.slice(0,30)+'…':t)+'“ '+(on?L('gemerkt','saved'):L('merken','save'))}else b.hidden=true}
+document.addEventListener('selectionchange',()=>{clearTimeout(window.__selT);window.__selT=setTimeout(selCheck,300)});
+function initSelSave(){if($('#selSave'))return;document.body.insertAdjacentHTML('beforeend','<button id="selSave" class="selsave notr" hidden></button>');const b=$('#selSave');
+  b.onmousedown=e=>e.preventDefault();b.onclick=()=>{if(SELTXT&&!isSaved(SELTXT)){toggleSaved(SELTXT,'',pageSrc());toast('☆ Zur Merkliste hinzugefügt.')}b.hidden=true;try{window.getSelection().removeAllRanges()}catch(e){}}}
+function savedItems(){const out=[];for(const x of (S.saved||[])){const c=x.cid&&cardById(x.cid);
+    if(c){out.push(vItem(c,Math.random()<.5?'recog':'prod'));continue}
+    if(x.en&&Math.random()<.6)out.push({type:'t',prompt:L('Auf Deutsch','In German')+': '+x.en,answers:[x.de],cat:'vocab',src:'saved',key:'sv:'+hash(x.k),spec:'sv|'+x.k,level:''});
+    else out.push({type:'d',prompt:x.en?L('Bedeutung','Meaning')+': '+x.en:'',answers:[x.de],cat:'spelling',src:'saved',key:'svd:'+hash(x.k),spec:'dict|'+x.de,level:''})}
+  return shuffle(out)}
 function levelPct(l){const us=levelUnits(l);if(!us.length)return 0;return us.filter(unitDone).length/us.length}
 
 /* ---------------- session runner ---------------- */
@@ -5182,21 +5262,24 @@ function runSession(opt){
   const items=opt.items.slice();let idx=0,ok=0,combo=0,results=[];const t0=Date.now();
   if(!items.length){main().innerHTML=`<div class="card">Keine Aufgaben vorhanden. <a href="${opt.back||'#/home'}">Zurück</a></div>`;return}
   function next(){if(idx>=items.length)return finish();renderItem(items[idx])}
-  function finish(){const pct=ok/items.length;const st={ok,n:items.length,pct,results,secs:Math.round((Date.now()-t0)/1000)};const lv0=LEVELS.filter(levelUnlocked),ud0=new Set(UNITS.filter(unitDone).map(u=>u.id));opt.onDone&&opt.onDone(st);
+  function finish(){const pct=ok/items.length;const st={ok,n:items.length,pct,results,secs:Math.round((Date.now()-t0)/1000)};const lv0=LEVELS.filter(levelReached),ud0=new Set(UNITS.filter(unitDone).map(u=>u.id));opt.onDone&&opt.onDone(st);
     const wrong=results.filter(r=>!r.ok);
-    main().innerHTML=`<div class="quiz"><div class="qcard result"><div class="muted">${esc(opt.title)}</div><div class="big">${Math.round(pct*100)}%</div><p>${ok} von ${items.length} richtig · ${Math.round(st.secs/60)} Min.</p>
+    main().innerHTML=`<div class="quiz">${levelBarHTML(lvlNow())}<div class="qcard result"><div class="muted">${esc(opt.title)}</div><div class="big">${Math.round(pct*100)}%</div><p>${ok} von ${items.length} richtig · ${Math.round(st.secs/60)} Min.</p>
     ${opt.passMsg?`<p>${opt.passMsg(st)}</p>`:''}
     ${wrong.length?`<h3>Zu wiederholen</h3><table class="t">${wrong.map(r=>`<tr><td>${esc(r.it.prompt.replace(/___/g,'…'))}</td><td><b>${esc(r.exp)}</b><br><span class="small muted">${esc(catName(r.cat))}</span></td></tr>`).join('')}</table>`:''}
     <div class="row" style="justify-content:center;margin-top:20px">${wrong.length?`<button class="pri" id="again">Fehler sofort wiederholen</button>`:''}<a class="btn" href="${opt.back||'#/home'}">Fertig</a></div></div></div>`;
-    FX.result(pct);{const nl=LEVELS.filter(levelUnlocked).find(l=>!lv0.includes(l));const nu=UNITS.find(u=>unitDone(u)&&!ud0.has(u.id));if(nl)setTimeout(()=>FX.levelUp(nl),1600);else if(nu)setTimeout(()=>FX.unitDone(U?U(nu.title):nu.title),1600)}
+    FX.result(pct);{const nl=LEVELS.filter(levelReached).find(l=>!lv0.includes(l));const nu=UNITS.find(u=>unitDone(u)&&!ud0.has(u.id));if(nl)setTimeout(()=>FX.levelUp(nl),1600);else if(nu)setTimeout(()=>FX.unitDone(U?U(nu.title):nu.title),1600)}
     const a=$('#again');if(a)a.onclick=()=>runSession(Object.assign({},opt,{items:wrong.map(r=>r.it),title:opt.title+' – Wiederholung',onDone:null,passMsg:null}));}
-  function head(){return `<div class="qhead"><a class="btn sm" href="${opt.back||'#/home'}">✕</a><div class="bar"><i style="width:${idx/items.length*100}%"></i></div><span class="small muted">${idx+1}/${items.length}</span></div>`}
+  const lvlNow=()=>opt.level||(items[Math.min(idx,items.length-1)]||{}).level||ctxLevel();
+  const liveOv=()=>opt.unit?{[opt.unit]:ok/items.length}:null;
+  const refreshLv=()=>{const el=$('.lvbar',main());if(el)el.outerHTML=levelBarHTML(lvlNow(),liveOv())};
+  function head(){return `<div class="qhead"><a class="btn sm" href="${opt.back||'#/home'}">✕</a><div class="bar"><i style="width:${idx/items.length*100}%"></i></div><span class="small muted">${idx+1}/${items.length}</span></div>${levelBarHTML(lvlNow(),liveOv())}`}
   function grade(it,given,res,extra){
     hist().n++;if(res.ok){hist().ok++;ok++}addXP(res.ok?3:1);
     let cat=it.cat;if(!res.ok)cat=classify(given,res.best||'',it);
     if(!res.ok)logError(it,given,cat);else errorFixed(it);
     if(res.ok&&res.kind==='punct')logMinor(it,given);
-    results.push({it,ok:res.ok,exp:res.best||'',cat});opt.onItem&&opt.onItem(it,res.ok,given);
+    results.push({it,ok:res.ok,exp:res.best||'',cat});opt.onItem&&opt.onItem(it,res.ok,given);refreshLv();
     const fb=$('#fb');const exp=res.best||'';
     let html='';
     if(res.ok){html=`<div class="fb ${res.kind==='exact'?'ok':'warn'}"><b class="h">${res.kind==='exact'?'✓ Richtig':res.kind==='punct'?'✓ Richtig – aber Zeichensetzung prüfen':'✓ Richtig (Umlaut-Umschrift akzeptiert)'}</b>${res.kind!=='exact'?`<div class="ans">${esc(exp)}</div>`:''}${it.explain?`<div style="margin-top:6px">${esc(it.explain)}</div>`:''}</div>`}
@@ -5206,6 +5289,7 @@ function runSession(opt){
       ${it.explain?`<div style="margin-top:8px">${esc(it.explain)}</div>`:''}
       ${META.cats[cat]&&META.cats[cat].tip?`<details><summary>Regel: ${esc(catName(cat))}</summary><div class="small">${TH(META.cats[cat].tip,(IC().cats||{})[cat])}</div></details>`:''}
       ${it.type!=='m'&&it.type!=='o'?`<button class="sm ghost" id="override" style="margin-top:6px">Meine Antwort war auch korrekt</button>`:''}</div>`}
+    if(it.card)html+=`<div class="small" style="margin-top:6px">${starBtn(nounStr(it.card),it.card.en,it.card.level+' · '+(it.card.theme||''),it.card.id)} ${esc(nounStr(it.card))} – ${L('merken','save')}</div>`;
     fb.innerHTML=html+(extra||'');if(res.ok){combo++;FX.correct(combo)}else{combo=0;FX.wrong()}
     const ov=$('#override');if(ov)ov.onclick=()=>{S.accepted[it.key]=(S.accepted[it.key]||[]).concat([String(given)]);const e=S.errors.find(e=>e.key===it.key&&!e.closed&&e.date===today()&&e.count===1);if(e)S.errors.splice(S.errors.indexOf(e),1);else{const e2=S.errors.find(e=>e.key===it.key&&!e.closed);if(e2)e2.count=Math.max(1,e2.count-1)}ok++;results[results.length-1].ok=true;save();updateBadge();ov.replaceWith(Object.assign(document.createElement('span'),{className:'pill ok',textContent:'als korrekt gespeichert'}))};
     $('#qfoot').innerHTML=`<button class="pri" id="nx">Weiter</button>${it.type!=='m'?sayBtn(it.type==='g'?fillGaps(it):exp):''}`;
@@ -5241,7 +5325,7 @@ function runSession(opt){
       $('#reset').onclick=()=>$$('.tile',built).forEach(t=>pool.appendChild(t));
       $('#chk').onclick=()=>{if(done())return;const s=$$('.tile',built).map(t=>t.dataset.w).join(' ');if(!s)return;grade(it,s,check(s,it.answers))}}
     else{const inp=$('#ans');inp.focus();
-      if(it.type==='d'){$('#play').onclick=()=>say(it.answers[0]);$('#slow').onclick=()=>say(it.answers[0],0.7);setTimeout(()=>say(it.answers[0]),300)}
+      if(it.type==='d'){$('#play').onclick=()=>say(it.answers[0]);$('#slow').onclick=()=>saySlow(it.answers[0]);setTimeout(()=>say(it.answers[0]),300)}
       const go=()=>{if(done())return;if(!inp.value.trim())return;inp.disabled=true;grade(it,inp.value,check(inp.value,it.answers))};
       $('#chk').onclick=go;inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();go()}}}
     $('#skip').onclick=()=>{if(done())return;const exp=it.type==='g'?it.gaps.map(g=>g[0]).join(' … '):it.type==='m'?it.correct:it.answers[0];grade(it,'',{ok:false,best:exp})};
@@ -5250,7 +5334,7 @@ function runSession(opt){
   next();}
 function logMinor(it,given){const rec={key:it.key+'#punct',spec:it.spec,src:it.src,cat:'comma',given:String(given).slice(0,200),exp:it.answers?it.answers[0]:'',ts:Date.now(),date:today(),minor:true};
   const ex=S.errors.find(e=>e.key===rec.key&&!e.closed);if(!ex)S.errors.push(Object.assign(rec,{id:'e'+Date.now().toString(36),count:1,streak:0,due:addDays(today(),1),closed:false}));else ex.count++;save();updateBadge()}
-function srcLabel(src){const u=unitById(src);if(u){const en=(window.I18N&&I18N.units[u.title]);const l=typeof LANG==='function'?LANG():'de';return u.level+' · '+(!en||l==='de'?u.title:l==='en'?en:u.title+' ('+en+')')}if(src.startsWith('vocab'))return 'Wortschatz';if(src.startsWith('read'))return 'Lesen';if(src.startsWith('dict'))return 'Diktat';if(src.startsWith('manual'))return 'Eigener Fehler';return src}
+function srcLabel(src){const u=unitById(src);if(u){const en=(window.I18N&&I18N.units[u.title]);const l=typeof LANG==='function'?LANG():'de';return u.level+' · '+(!en||l==='de'?u.title:l==='en'?en:u.title+' ('+en+')')}if(src.startsWith('vocab'))return 'Wortschatz';if(src.startsWith('read'))return 'Lesen';if(src.startsWith('dict'))return 'Diktat';if(src.startsWith('manual'))return 'Eigener Fehler';if(src==='saved')return 'Merkliste';return src}
 
 /* ---------------- views ---------------- */
 const R={};
@@ -5259,7 +5343,7 @@ const decR=h=>decodeURIComponent(h||'').replace(/^#?\/?/,'').replace(/--/g,'/').
 function nav(r){r=String(r||'').replace(/^#\/?/,'')||'home';CUR=r;try{const e='#'+encR(r);if(location.hash!==e)location.hash=e}catch(x){}route()}
 window.nav=nav;let CUR=null;
 document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#/"]');if(!a)return;e.preventDefault();nav(a.getAttribute('href'))});
-function route(){document.onkeydown=null;main().onclick=null;main().onkeydown=null;if(window.speechSynthesis)speechSynthesis.cancel();
+function route(){document.onkeydown=null;main().onclick=null;main().onkeydown=null;stopSay();
   let h=CUR||'home';const [r,...args]=h.split('/');
   $$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.r===r||(r==='unit'&&a.dataset.r==='path')));
   (R[r]||R.home)(...args);window.scrollTo(0,0);}
@@ -5273,22 +5357,24 @@ R.home=function(){
   const maxx=Math.max(20,...days.map(d=>d.xp));
   const recent=[];for(let i=0;i<14;i++){const d=S.history[addDays(today(),-i)];if(d)recent.push(d)}const tn=recent.reduce((a,b)=>a+b.n,0),tok=recent.reduce((a,b)=>a+b.ok,0);
   const cats=catStats().slice(0,6);
+  const ct=continueTarget(),nsv=(S.saved||[]).length;
   main().innerHTML=`<h1>Grüezi!</h1><p class="sub">Ziel: ${esc(META.goal||'B2 mündlich · B1 schriftlich')} — Hochdeutsch, systematisch von A1 bis B2.</p>
+  ${ct?`<div class="card hero-cont"><div class="hc-l"><div class="small muted">${ct.resume?'Hier haben Sie aufgehört':ct.start?'Ihr Kurs beginnt hier':'Als Nächstes im Kurs'}</div><h2 class="hc-t"><span class="lvl">${ct.u.level}</span> ${U(ct.u.title)}</h2><div class="small muted">Abschnitt: ${TABNAME[ct.tab]||'Grammatik'}</div>${levelBarHTML(ct.u.level)}</div><button class="pri big" id="contBtn">▶ ${ct.start?'Kurs starten':'Weiter lernen'}</button></div>`
+   :`<div class="card hero-cont"><div class="hc-l"><h2 class="hc-t">Alle Einheiten abgeschlossen 🎉</h2><div class="small muted">Jetzt Niveautests und Prüfungstraining.</div></div><button class="pri big" onclick="nav('#/exam')">▶ Zur Prüfung</button></div>`}
+  <div class="grid g3 sec">
+    <div class="card click mini" onclick="nav('#/vocab/review')"><b>↻ Wiederholen</b><span class="small muted">${due} Wörter fällig</span></div>
+    <div class="card click mini" onclick="nav('#/errors/train')"><b>⚑ Fehler korrigieren</b><span class="small muted">${errs} Fehler fällig</span></div>
+    <div class="card click mini" onclick="nav('#/saved')"><b>☆ Merkliste</b><span class="small muted">${nsv} gemerkt</span></div>
+  </div>
   <div class="grid g4">
     <div class="card stat"><b>${streak()}</b><span>Tage in Folge</span></div>
     <div class="card stat"><b>${tn?Math.round(tok/tn*100)+'%':'–'}</b><span>Trefferquote (14 Tage)</span></div>
     <div class="card stat"><b>${vocabLearned()}</b><span>Wörter gefestigt (von ${cards().length})</span></div>
     <div class="card stat"><b>${open}</b><span>offene Fehlermuster</span></div>
   </div>
-  ${Object.keys(S.history).length<3&&LANG()!=='de'?`<div class="card" style="margin:14px 0;border-color:var(--accent)"><h3>How to start</h3><ol class="small" style="margin:0;padding-left:18px;line-height:1.7"><li><b>Complete beginner?</b> Start with the first unit in the <a href="#/path/A1">learning path</a>. Each A1/A2 unit explains the grammar in English.</li><li><b>Each unit:</b> read the grammar → listen to the examples (▶) and repeat them out loud → learn the words → practise. 80 % completes the unit and unlocks the next one.</li><li><b>Every mistake</b> is saved and comes back in <a href="#/errors">mistake training</a> until you get it right on two different days.</li><li><b>Daily:</b> 20–30 minutes is better than two hours once a week. Use ① Review and ② Fix mistakes first.</li><li><b>Language:</b> switch between German and English with the 🌐 button at the top. „Deutsch + English“ shows both – the best way to learn the app words too.</li></ol></div>`:''}${Object.keys(S.history).length<3&&LANG()==='de'?`<div class="card" style="margin:14px 0;border-color:var(--accent)"><h3>So starten Sie</h3><ol class="small" style="margin:0;padding-left:18px;line-height:1.7"><li><b>Einstufung:</b> Sie sprechen schon etwas Deutsch? Machen Sie unter <a href="#/path/A1">Lernpfad</a> den <b>Niveautest A1</b> (dann A2 …). Ab 80 % ist das Niveau bestanden und das nächste freigeschaltet – so überspringen Sie nichts unbemerkt.</li><li><b>Pro Einheit:</b> Grammatik lesen → Beispiele laut nachsprechen → Wortschatz lernen → Üben (≥ 80 % zum Abschliessen).</li><li><b>Jeder Fehler</b> wird automatisch kategorisiert und kommt ins <a href="#/errors">Fehlertraining</a>, bis er an zwei verschiedenen Tagen richtig war.</li>${IN_VIEWER?'<li><b>Hören/Sprechen:</b> Die Originalaudios Ihrer Bücher wählen Sie unter <a href="#/listen">Hören</a> aus Ihrem Ordner (bleiben auf dem Gerät). Sprechen per Diktierfunktion der Tastatur.</li><li><b>Fortschritt</b> wird auf diesem Gerät gespeichert. Gerätewechsel: unter Einstellungen ein Backup speichern und auf dem anderen Gerät importieren.</li>':'<li><b>Hören/Sprechen:</b> Chrome oder Edge verwenden (Sprachausgabe & Spracherkennung). Die Originalaudios aus Ihren Büchern laufen, solange diese Datei im Ordner „German“ liegt.</li><li><b>Backup:</b> Der Fortschritt liegt im Browser – unter <a href="#/settings">Einstellungen</a> wöchentlich exportieren.</li>'}</ol></div>`:''}
-  <h2>Heute</h2>
-  <div class="grid g3">
-    <div class="card click" onclick="nav('#/vocab/review')"><h3>① Wiederholen</h3><p class="muted small">${due} Wörter fällig${due?'':' – gut gemacht'}. Spaced Repetition: kurz, aber täglich.</p><button class="pri" ${due?'':'disabled'}>Wiederholen</button></div>
-    <div class="card click" onclick="nav('#/errors/train')"><h3>② Fehler korrigieren</h3><p class="muted small">${errs} Fehler fällig. Jeder Fehler muss an zwei verschiedenen Tagen richtig sein, bevor er als behoben gilt.</p><button class="pri" ${errs?'':'disabled'}>Fehlertraining</button></div>
-    <div class="card click" onclick="nav('${cu?'#/unit/'+cu.id:'#/path'}')"><h3>③ Neues lernen</h3><p class="muted small">${cu?`<span class="lvl">${cu.level}</span> ${U(cu.title)}`:'Alle freigeschalteten Einheiten abgeschlossen – Niveautest machen!'}</p><button class="pri">${cu?'Weiter lernen':'Zum Lernpfad'}</button></div>
-  </div>
+  ${Object.keys(S.history).length<3&&LANG()!=='de'?`<div class="card" style="margin:14px 0;border-color:var(--accent)"><h3>How to start</h3><ol class="small" style="margin:0;padding-left:18px;line-height:1.7"><li><b>Complete beginner?</b> Start with the first unit in the <a href="#/path/A1">learning path</a>. Each A1/A2 unit explains the grammar in English.</li><li><b>Each unit:</b> read the grammar → listen to the examples (▶) and repeat them out loud → learn the words → practise. 80 % completes the unit. All units are open, but the recommended order is top to bottom.</li><li><b>Every mistake</b> is saved and comes back in <a href="#/errors">mistake training</a> until you get it right on two different days.</li><li><b>Daily:</b> 20–30 minutes is better than two hours once a week. Use ① Review and ② Fix mistakes first.</li><li><b>Language:</b> switch between German and English with the 🌐 button at the top. „Deutsch + English“ shows both – the best way to learn the app words too.</li></ol></div>`:''}${Object.keys(S.history).length<3&&LANG()==='de'?`<div class="card" style="margin:14px 0;border-color:var(--accent)"><h3>So starten Sie</h3><ol class="small" style="margin:0;padding-left:18px;line-height:1.7"><li><b>Einstufung:</b> Sie sprechen schon etwas Deutsch? Machen Sie unter <a href="#/path/A1">Lernpfad</a> den <b>Niveautest A1</b> (dann A2 …). Ab 80 % ist das Niveau bestanden. Alle Einheiten sind ohnehin offen – Sie können jederzeit springen.</li><li><b>Pro Einheit:</b> Grammatik lesen → Beispiele laut nachsprechen → Wortschatz lernen → Üben (≥ 80 % zum Abschliessen).</li><li><b>Jeder Fehler</b> wird automatisch kategorisiert und kommt ins <a href="#/errors">Fehlertraining</a>, bis er an zwei verschiedenen Tagen richtig war.</li>${IN_VIEWER?'<li><b>Hören/Sprechen:</b> Die Originalaudios Ihrer Bücher wählen Sie unter <a href="#/listen">Hören</a> aus Ihrem Ordner (bleiben auf dem Gerät). Sprechen per Diktierfunktion der Tastatur.</li><li><b>Fortschritt</b> wird auf diesem Gerät gespeichert. Gerätewechsel: unter Einstellungen ein Backup speichern und auf dem anderen Gerät importieren.</li>':'<li><b>Hören/Sprechen:</b> Chrome oder Edge verwenden (Sprachausgabe & Spracherkennung). Die Originalaudios aus Ihren Büchern laufen, solange diese Datei im Ordner „German“ liegt.</li><li><b>Backup:</b> Der Fortschritt liegt im Browser – unter <a href="#/settings">Einstellungen</a> wöchentlich exportieren.</li>'}</ol></div>`:''}
   <h2>Fortschritt nach Niveau</h2>
-  <div class="grid g4">${LEVELS.map(l=>{const us=levelUnits(l),dn=us.filter(unitDone).length,L=S.levels[l]||{};return `<div class="card click" onclick="nav('#/path/${l}')"><div class="row"><span class="lvl">${l}</span><span class="spacer"></span>${L.passed?'<span class="pill ok">Test bestanden</span>':levelUnlocked(l)?'<span class="pill acc">offen</span>':'<span class="pill">gesperrt</span>'}</div>
+  <div class="grid g4">${LEVELS.map(l=>{const us=levelUnits(l),dn=us.filter(unitDone).length,L=S.levels[l]||{};return `<div class="card click" onclick="nav('#/path/${l}')"><div class="row"><span class="lvl">${l}</span><span class="spacer"></span>${L.passed?'<span class="pill ok">Test bestanden</span>':'<span class="pill acc">offen</span>'}</div>
     <div class="small muted" style="margin-top:10px">Grammatik ${dn}/${us.length}</div><div class="bar ok"><i style="width:${us.length?dn/us.length*100:0}%"></i></div>
     <div class="small muted" style="margin-top:8px">Wortschatz ${vocabLearned(l)}/${cards().filter(c=>c.level===l).length}</div><div class="bar"><i style="width:${(vocabLearned(l)/Math.max(1,cards().filter(c=>c.level===l).length))*100}%"></i></div></div>`}).join('')}</div>
   <div class="grid g2" style="margin-top:14px">
@@ -5296,31 +5382,44 @@ R.home=function(){
     <div class="card"><h3>Aktivität (30 Tage)</h3><div class="heat">${days.map(d=>`<i title="${d.xp} XP" style="background:${d.xp?`color-mix(in srgb, var(--accent) ${Math.round(25+75*d.xp/maxx)}%, transparent)`:''}"></i>`).join('')}</div>
     <p class="small muted" style="margin-top:12px">Empfehlung: täglich 30–45 Min. — 10 Min. Wiederholung, 10 Min. Fehlertraining, 15–20 Min. neue Einheit + Hören/Sprechen.</p>
     ${backupNag()}</div>
-  </div>`;};
+  </div>`;
+  const cb=$('#contBtn');if(cb)cb.onclick=()=>nav('#/unit/'+ct.u.id+'/'+ct.tab);};
 function backupNag(){const lb=S.lastBackup;if(lb&&daysBetween(lb,today())<7)return '';return `<div class="fb warn small">${L('Ihr Fortschritt wird im Browser gespeichert.','Your progress is stored in the browser.')} ${lb?L('Letztes Backup: '+lb+'.','Last backup: '+lb+'.'):L('Noch kein Backup.','No backup yet.')} <a href="#" onclick="event.preventDefault();backupNow()">💾 Jetzt sichern</a></div>`}
 function catStats(){const m={};for(const e of S.errors){const c=m[e.cat]=m[e.cat]||{cat:e.cat,open:0,total:0};c.total+=e.count||1;if(!e.closed)c.open++}return Object.values(m).sort((a,b)=>b.open-a.open||b.total-a.total)}
 
+/* SAVED (Merkliste) */
+R.saved=function(){const list=(S.saved||[]).slice().reverse();
+  main().innerHTML=`<h1>☆ Merkliste</h1><p class="sub">${LH('Ihre gemerkten Wörter und Ausdrücke. Merken: auf <b>☆</b> neben einem Wort oder Satz tippen – oder beliebigen deutschen Text markieren und unten auf „☆ merken“ tippen.','Your saved words and phrases. To save: tap <b>☆</b> next to a word or sentence – or select any German text and tap “☆ save” at the bottom.')}</p>
+  <div class="row" style="margin-bottom:14px"><button class="pri" id="svPr" ${list.length?'':'disabled'}>Merkliste üben (${list.length})</button><button id="svPl" ${list.length?'':'disabled'}>▶ Alle vorlesen</button></div>
+  <div class="card"><b>Eigenes Wort hinzufügen</b><div class="row" style="margin-top:8px"><input type="text" id="svDe" placeholder="Deutsch, z. B. die Gemeinde" style="flex:2;min-width:0"><input type="text" id="svEn" placeholder="Englisch (optional)" style="flex:2;min-width:0"><button id="svAdd">Hinzufügen</button></div></div>
+  <div class="card" style="margin-top:14px">${list.length?`<table class="t sv">${list.map(x=>`<tr><td class="nw">${sayBtn(x.de)}</td><td><b>${esc(x.de)}</b><div class="small muted">${esc(x.src||'')}${x.src?' · ':''}${x.at||''}</div></td><td><input type="text" class="sven" data-k="${esc(x.k)}" value="${esc(x.en||'')}" placeholder="Übersetzung…"></td><td><button class="sm ghost" data-del="${esc(x.k)}" title="Entfernen">✕</button></td></tr>`).join('')}</table>`:'<p class="muted">Noch nichts gemerkt.</p>'}</div>`;
+  $('#svAdd').onclick=()=>{const de=$('#svDe').value.trim();if(!de)return toast('Bitte ein deutsches Wort eingeben.');if(!isSaved(de))toggleSaved(de,$('#svEn').value.trim(),'Eigenes Wort');R.saved()};
+  $('#svDe').onkeydown=$('#svEn').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('#svAdd').click()}};
+  $$('.sven').forEach(i=>i.onchange=()=>{const x=S.saved.find(y=>y.k===i.dataset.k);if(x){x.en=i.value.trim();save();toast('Gespeichert.')}});
+  $$('[data-del]').forEach(b=>b.onclick=()=>{const i=S.saved.findIndex(y=>y.k===b.dataset.del);if(i>=0){S.saved.splice(i,1);save()}R.saved()});
+  $('#svPl').onclick=()=>{const t=list.map(x=>x.de);let i=0;const nx=()=>{if(i>=t.length)return;const u=say(t[i++]);if(u)u.onend=()=>setTimeout(nx,700)};nx()};
+  $('#svPr').onclick=()=>runSession({title:'Merkliste',items:savedItems(),back:'#/saved'})};
+
 /* PATH */
 R.path=function(lv){
-  main().innerHTML=`<h1>Lernpfad A1 → B2</h1><p class="sub">Feste Reihenfolge. Eine Einheit gilt als abgeschlossen bei ≥ 80 %. Wer ein Niveau schon beherrscht, kann es per Niveautest überspringen.</p>
-  <div class="tabs">${LEVELS.map(l=>`<button data-l="${l}" class="${(lv||currentLevel())===l?'on':''}">${l} ${levelUnlocked(l)?'':'🔒'}</button>`).join('')}</div><div id="pl"></div>`;
+  main().innerHTML=`<h1>Lernpfad A1 → B2</h1><p class="sub">Alle Einheiten sind offen – empfohlen ist die Reihenfolge von oben nach unten. Eine Einheit gilt als abgeschlossen bei ≥ 80 %.</p>
+  <div class="tabs">${LEVELS.map(l=>`<button data-l="${l}" class="${(lv||currentLevel())===l?'on':''}">${l}</button>`).join('')}</div><div id="pl"></div>`;
   $$('.tabs button').forEach(b=>b.onclick=()=>{nav('#/path/'+b.dataset.l)});
   const l=lv||currentLevel();const us=levelUnits(l),L=S.levels[l]||{};
   const info=(META.levels||{})[l]||{};
   $('#pl').innerHTML=`<div class="card" style="margin-bottom:14px"><div class="row"><span class="lvl">${l}</span><b>${esc(info.name||'')}</b><span class="spacer"></span><span class="small muted">${us.filter(unitDone).length}/${us.length} Einheiten · Test: ${L.best?Math.round(L.best*100)+'%':'–'}</span></div>
     <p class="small muted" style="margin:8px 0 10px">${esc(info.desc||'')}</p>
-    <div class="row">${levelUnlocked(l)?`<a class="btn pri" href="#/test/${l}">Niveautest ${l} ${L.passed?'(wiederholen)':''}</a>`:`<a class="btn" href="#/test/${l}">Einstufung: ${l} direkt testen</a><span class="small muted">Bestehen (≥ 80 %) schaltet ${l} frei und markiert alle früheren Niveaus als bestanden.</span>`}</div></div>
-    ${us.map((u,i)=>{const st=S.units[u.id]||{},lock=!unitUnlocked(u);return `<div class="unitrow ${unitDone(u)?'done':''} ${lock?'locked':''}" data-u="${u.id}" data-lock="${lock?1:0}"><div class="num">${unitDone(u)?'✓':i+1}</div><div class="t"><b>${U(u.title)}</b><small>${(u.topics||[]).map(U).join(' · ')}</small><br><small class="muted">📖 ${U(u.source||'')}</small></div><div style="text-align:right;min-width:90px">${st.att?`<div class="small">${Math.round(st.best*100)}%</div><div class="bar ${unitDone(u)?'ok':''}" style="width:80px"><i style="width:${st.best*100}%"></i></div>`:lock?'🔒':'<span class="pill acc">neu</span>'}</div></div>`}).join('')}`;
-  $$('.unitrow').forEach(r=>r.onclick=()=>{if(r.dataset.lock==='1'){toast('Erst die vorherige Einheit abschliessen (≥ 80 %) – oder Niveautest machen.');return}nav('#/unit/'+r.dataset.u)});};
-function currentLevel(){const u=currentUnit();if(u)return u.level;let l='A1';for(const x of LEVELS)if(levelUnlocked(x))l=x;return l}
+    <div class="row"><a class="btn" href="#/test/${l}">Niveautest ${l} ${L.passed?'(wiederholen)':''}</a></div></div>
+    ${us.map((u,i)=>{const st=S.units[u.id]||{},lock=false;return `<div class="unitrow ${unitDone(u)?'done':''} ${lock?'locked':''}" data-u="${u.id}" data-lock="${lock?1:0}"><div class="num">${unitDone(u)?'✓':i+1}</div><div class="t"><b>${U(u.title)}</b><small>${(u.topics||[]).map(U).join(' · ')}</small><br><small class="muted">📖 ${U(u.source||'')}</small></div><div style="text-align:right;min-width:90px">${st.att?`<div class="small">${Math.round(st.best*100)}%</div><div class="bar ${unitDone(u)?'ok':''}" style="width:80px"><i style="width:${st.best*100}%"></i></div>`:lock?'🔒':'<span class="pill acc">neu</span>'}</div></div>`}).join('')}`;
+  $$('.unitrow').forEach(r=>r.onclick=()=>nav('#/unit/'+r.dataset.u));};
+function currentLevel(){const u=currentUnit();if(u)return u.level;let l='A1';for(const x of LEVELS)if(levelReached(x))l=x;return l}
 
 /* UNIT */
 R.unit=function(id,tab){const u=unitById(id);if(!u)return R.path();
-  if(!unitUnlocked(u)){toast('Diese Einheit ist noch gesperrt.');nav('#/path/'+u.level);return}
-  const st=uState(u.id);tab=tab||'gram';
+  const st=uState(u.id);tab=tab||'gram';S.lastPos={unit:u.id,tab,at:Date.now()};save();
   const deckIds=(u.vocab||[]);const vc=cards().filter(c=>deckIds.includes(c.deck));
   main().innerHTML=`<div class="row"><a href="#/path/${u.level}" class="small">← ${u.level} Lernpfad</a></div>
-  <h1><span class="lvl">${u.level}</span> ${U(u.title)}</h1><p class="sub">${(u.topics||[]).map(U).join(' · ')}<br><span class="small">📖 Material: ${U(u.source||'')}</span></p>
+  ${levelBarHTML(u.level)}<h1><span class="lvl">${u.level}</span> ${U(u.title)}</h1><p class="sub">${(u.topics||[]).map(U).join(' · ')}<br><span class="small">📖 Material: ${U(u.source||'')}</span></p>
   <div class="tabs"><button data-t="gram">Grammatik</button><button data-t="exs">Beispiele (${(u.examples||[]).length})</button><button data-t="voc">Wortschatz (${vc.length})</button><button data-t="prac">Üben (${(u.ex||[]).length})</button></div><div id="ut"></div>`;
   $$('.tabs button').forEach(b=>{b.classList.toggle('on',b.dataset.t===tab);b.onclick=()=>R.unit(id,b.dataset.t)});
   const ut=$('#ut');
@@ -5329,17 +5428,17 @@ R.unit=function(id,tab){const u=unitById(id);if(!u)return R.path();
     ${u.swiss?`<div class="card" style="margin-top:14px"><b>🇨🇭 Schweiz-Hinweis</b><p class="small" style="margin:6px 0 0">${TH(u.swiss,UE(u).swiss)}</p></div>`:''}
     ${unitTracksHTML(u)}
     <div class="row" style="margin-top:18px"><button class="pri" onclick="nav('#/unit/${u.id}/exs')">Weiter: Beispiele →</button></div>`}
-  else if(tab==='exs'){ut.innerHTML=`<div class="card"><div class="row" style="margin-bottom:6px"><button class="sm" id="playall">▶ Alle vorlesen</button><span class="small muted">Laut mitsprechen! Englisch ausblenden: <label><input type="checkbox" id="hideEn"> </label></span></div>${(u.examples||[]).map(e=>`<div class="ex">${sayBtn(e[0])}<div><div class="de">${esc(e[0])}</div><div class="en">${esc(e[1]||'')}</div></div></div>`).join('')}</div>
+  else if(tab==='exs'){ut.innerHTML=`<div class="card"><div class="row" style="margin-bottom:6px"><button class="sm" id="playall">▶ Alle vorlesen</button><span class="small muted">Laut mitsprechen! Englisch ausblenden: <label><input type="checkbox" id="hideEn"> </label></span></div>${(u.examples||[]).map(e=>`<div class="ex">${sayBtn(e[0])}${starBtn(e[0],e[1],u.level+' · '+u.title)}<div><div class="de">${esc(e[0])}</div><div class="en">${esc(e[1]||'')}</div></div></div>`).join('')}</div>
     <div class="row" style="margin-top:14px"><button class="pri" onclick="nav('#/unit/${u.id}/voc')">Weiter: Wortschatz →</button><a class="btn" href="#/dictation/${u.id}">Diktat mit diesen Sätzen</a><a class="btn" href="#/shadow/${u.id}">Nachsprechen</a></div>`;
     $('#hideEn').onchange=e=>$$('.ex .en').forEach(x=>x.style.visibility=e.target.checked?'hidden':'');
     $('#playall').onclick=()=>{const exs=(u.examples||[]).map(e=>e[0]);let i=0;const nx=()=>{if(i>=exs.length)return;const ut=say(exs[i++]);if(ut)ut.onend=()=>setTimeout(nx,700)};nx()}}
-  else if(tab==='voc'){ut.innerHTML=vc.length?`<div class="card"><div class="row"><b>${vc.length} Wörter</b><span class="spacer"></span><button class="pri" id="learnU">Diese Wörter lernen</button></div><table class="t" style="margin-top:10px">${vc.map(c=>`<tr><td>${sayBtn(nounStr(c))}</td><td>${artSpan(c)}${c.plural?` <span class="small muted">· Pl. ${esc(c.plural)}</span>`:''}${c.forms?` <span class="small muted">(${esc(c.forms)})</span>`:''}</td><td>${esc(c.en)}</td><td class="small muted">${esc(c.exDe)}</td><td>${vstate(c.id)?`<span class="pill ${vstate(c.id).box>=3?'ok':''}">Box ${vstate(c.id).box}</span>`:''}</td></tr>`).join('')}</table></div>`:'<p class="muted">Kein eigener Wortschatz für diese Einheit – siehe Bereich Wortschatz.</p>';
+  else if(tab==='voc'){ut.innerHTML=vc.length?`<div class="card"><div class="row"><b>${vc.length} Wörter</b><span class="spacer"></span><button class="pri" id="learnU">Diese Wörter lernen</button></div><table class="t" style="margin-top:10px">${vc.map(c=>`<tr><td class="nw">${sayBtn(nounStr(c))}${starBtn(nounStr(c),c.en,u.level+' · '+u.title,c.id)}</td><td>${artSpan(c)}${c.plural?` <span class="small muted">· Pl. ${esc(c.plural)}</span>`:''}${c.forms?` <span class="small muted">(${esc(c.forms)})</span>`:''}</td><td>${esc(c.en)}</td><td class="small muted">${esc(c.exDe)}</td><td>${vstate(c.id)?`<span class="pill ${vstate(c.id).box>=3?'ok':''}">Box ${vstate(c.id).box}</span>`:''}</td></tr>`).join('')}</table></div>`:'<p class="muted">Kein eigener Wortschatz für diese Einheit – siehe Bereich Wortschatz.</p>';
     const b=$('#learnU');if(b)b.onclick=()=>vocabSession(vc.filter(c=>!S.vocab[c.id]).slice(0,S.settings.dailyNew*2).concat(vc.filter(c=>S.vocab[c.id]&&S.vocab[c.id].due<=today())),'Wortschatz: '+u.title,'#/unit/'+u.id+'/voc')}
   else if(tab==='prac'){const items=unitItems(u);
     ut.innerHTML=`<div class="card"><p>${items.length} Aufgaben. Bestanden ab 80 %. Bisher bestes Ergebnis: <b>${st.att?Math.round(st.best*100)+'%':'–'}</b> (${st.att||0} Versuche).</p><p class="small muted">Tipp: Erst Grammatik lesen und Beispiele laut sprechen. Jede falsche Antwort landet automatisch im Fehlertraining.</p><button class="pri" id="go">Übung starten</button></div>`;
-    $('#go').onclick=()=>runSession({title:u.title,items:shuffleKeepGroups(items),back:'#/unit/'+u.id+'/prac',
+    $('#go').onclick=()=>runSession({title:u.title,items:shuffleKeepGroups(items),back:'#/unit/'+u.id+'/prac',level:u.level,unit:u.id,
       onDone:st2=>{const s=uState(u.id);s.att=(s.att||0)+1;s.best=Math.max(s.best||0,st2.pct);s.last=today();save()},
-      passMsg:st2=>st2.pct>=0.8?'✓ Einheit abgeschlossen. Die nächste Einheit ist freigeschaltet.':'Noch nicht 80 % – Fehler wiederholen, Grammatik nochmal ansehen, dann neu versuchen.'})}};
+      passMsg:st2=>st2.pct>=0.8?'✓ Einheit abgeschlossen. Weiter mit der nächsten Einheit.':'Noch nicht 80 % – Fehler wiederholen, Grammatik nochmal ansehen, dann neu versuchen.'})}};
 function shuffleKeepGroups(items){return shuffle(items)}
 
 /* LEVEL TEST */
@@ -5347,10 +5446,10 @@ R.test=function(l){const us=levelUnits(l);const pool=[];
   us.forEach(u=>{const its=unitItems(u).map(i=>Object.assign(i,{key:i.key}));pool.push(...sample(its,Math.max(2,Math.ceil(40/us.length))))});
   const vc=sample(cards().filter(c=>c.level===l&&c.kind==='noun'),6).map(c=>vItem(c,'prod'));
   const items=shuffle(sample(pool,40).concat(vc));
-  main().innerHTML=`<h1>Niveautest ${l}</h1><p class="sub">${items.length} Aufgaben aus allen ${l}-Einheiten (Grammatik + Wortschatz). Bestehen ab 80 %.</p><div class="card"><p>${L('Bestehen schaltet das nächste Niveau frei.','Passing unlocks the next level.')} ${!levelUnlocked(l)?LH('Da '+l+' noch gesperrt ist, gilt dies als <b>Einstufungstest</b>: Bestehen schaltet '+l+' frei und markiert die Einheiten als „getestet“.','As '+l+' is still locked, this counts as a <b>placement test</b>: passing unlocks '+l+' and marks its units as “tested”.'):''}</p><button class="pri" id="go">Test starten</button></div>`;
+  main().innerHTML=`<h1>Niveautest ${l}</h1><p class="sub">${items.length} Aufgaben aus allen ${l}-Einheiten (Grammatik + Wortschatz). Bestehen ab 80 %.</p><div class="card"><p>${L('Bestehen (≥ 80 %) markiert das Niveau als bestanden.','Passing (≥ 80 %) marks the level as passed.')} ${false?LH('Da '+l+' noch gesperrt ist, gilt dies als <b>Einstufungstest</b>: Bestehen schaltet '+l+' frei und markiert die Einheiten als „getestet“.','As '+l+' is still locked, this counts as a <b>placement test</b>: passing unlocks '+l+' and marks its units as “tested”.'):''}</p><button class="pri" id="go">Test starten</button></div>`;
   $('#go').onclick=()=>runSession({title:'Niveautest '+l,items,back:'#/path/'+l,onDone:st=>{const L=S.levels[l]=S.levels[l]||{};L.best=Math.max(L.best||0,st.pct);L.tries=(L.tries||0)+1;
       if(st.pct>=0.8){L.passed=true;L.unlocked=true;L.testedOut=true;const i=LEVELS.indexOf(l);for(let k=0;k<i;k++){const P=S.levels[LEVELS[k]]=S.levels[LEVELS[k]]||{};P.passed=true;P.unlocked=true;P.testedOut=true}if(LEVELS[i+1]){S.levels[LEVELS[i+1]]=S.levels[LEVELS[i+1]]||{};S.levels[LEVELS[i+1]].unlocked=true}}save()},
-    passMsg:st=>st.pct>=0.8?`✓ ${l} bestanden!${LEVELS[LEVELS.indexOf(l)+1]?' '+LEVELS[LEVELS.indexOf(l)+1]+' ist jetzt freigeschaltet.':''}`:'Nicht bestanden. Die falsch beantworteten Aufgaben sind jetzt im Fehlertraining.'})};
+    passMsg:st=>st.pct>=0.8?`✓ ${l} bestanden!`:'Nicht bestanden. Die falsch beantworteten Aufgaben sind jetzt im Fehlertraining.'})};
 
 /* VOCAB */
 function vItem(c,mode){const src='vocab';const key='v:'+c.id+':'+mode;
@@ -5361,7 +5460,8 @@ function vItem(c,mode){const src='vocab';const key='v:'+c.id+':'+mode;
   // recog
   const others=sample(cards().filter(x=>x.level===c.level&&x.id!==c.id&&x.en!==c.en),3).map(x=>x.en);
   return{type:'m',prompt:L('Was bedeutet','What does this mean')+': '+nounStr(c)+'?',correct:c.en,options:[c.en,...others],answers:[c.en],cat:'vocab',src,key,spec:'v|'+c.id+'|recog',level:c.level,card:c}}
-function itemFromSpec(spec,e){if(spec.startsWith('v|')){const [,id,mode]=spec.split('|');const c=cardById(id);return c?vItem(c,mode):null}
+function itemFromSpec(spec,e){if(spec.startsWith('sv|')){const x=(S.saved||[]).find(y=>y.k===spec.slice(3));return x?{type:'t',prompt:L('Auf Deutsch','In German')+': '+(x.en||x.de),answers:[x.de],cat:'vocab',src:'saved',key:e.key,spec,level:''}:null}
+  if(spec.startsWith('v|')){const [,id,mode]=spec.split('|');const c=cardById(id);return c?vItem(c,mode):null}
   if(spec.startsWith('man|')){const p=spec.split('|');return{type:'t',prompt:L('Korrigieren Sie','Correct this')+': „'+p[1]+'“',answers:[p[2]],cat:e.cat,src:'manual',key:e.key,spec,level:e.level||'',explain:p[3]||''}}
   if(spec.startsWith('dict|')){const p=spec.split('|');return{type:'d',prompt:'',answers:[p[1]],cat:'listening',src:'dict',key:e.key,spec,level:e.level||''}}
   return parseItem(spec,{src:e.src,key:e.key,cat:e.cat,level:e.level})}
@@ -5370,7 +5470,7 @@ function vocabSession(list,title,back){
   const intro=list.filter(c=>!S.vocab[c.id]);let i=0;
   function showIntro(){if(i>=intro.length)return quiz();const c=intro[i];
     main().innerHTML=`<div class="quiz"><div class="qhead"><a class="btn sm" href="${back}">✕</a><div class="bar"><i style="width:${i/intro.length*100}%"></i></div><span class="small muted">Neu ${i+1}/${intro.length}</span></div>
-    <div class="qcard flash"><div class="muted small">${esc(c.theme||'')}</div><div class="w">${artSpan(c)} ${sayBtn(nounStr(c))}</div>${c.plural?`<div class="pl">Plural: <span class="plu">die ${esc(c.plural)}</span></div>`:''}${c.forms?`<div class="pl">${esc(c.forms)}</div>`:''}<div style="font-size:20px;margin-top:10px">${esc(c.en)}</div>${c.exDe?`<div class="exs">${sayBtn(c.exDe)} ${esc(c.exDe)}${c.exEn?`<br><span class="small">${esc(c.exEn)}</span>`:''}</div>`:''}
+    ${levelBarHTML(c.level)}<div class="qcard flash"><div class="muted small">${esc(c.theme||'')}</div><div class="w">${artSpan(c)} ${sayBtn(nounStr(c))} ${starBtn(nounStr(c),c.en,c.level+' · '+(c.theme||''),c.id)}</div>${c.plural?`<div class="pl">Plural: <span class="plu">die ${esc(c.plural)}</span></div>`:''}${c.forms?`<div class="pl">${esc(c.forms)}</div>`:''}<div style="font-size:20px;margin-top:10px">${esc(c.en)}</div>${c.exDe?`<div class="exs">${sayBtn(c.exDe)} ${esc(c.exDe)}${c.exEn?`<br><span class="small">${esc(c.exEn)}</span>`:''}</div>`:''}
     <div class="row" style="justify-content:center;margin-top:22px"><button class="pri" id="n">Gemerkt → ⏎</button></div></div></div>`;
     say(nounStr(c));$('#n').onclick=()=>{i++;showIntro()};document.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('#n').click()}}}
   function quiz(){document.onkeydown=null;const items=[];
@@ -5385,14 +5485,14 @@ R.vocab=function(sub){
   main().innerHTML=`<h1>Wortschatz</h1><p class="sub">${cards().length} ${LH('Wörter, nach Niveau und Thema. Nomen immer mit Artikel und Plural lernen – <span class="der">der</span> · <span class="die">die</span> · <span class="das">das</span> sind farbcodiert.','words, by level and topic. Always learn nouns with their article and plural – <span class="der">der</span> · <span class="die">die</span> · <span class="das">das</span> are colour-coded.')}</p>
   <div class="grid g3"><div class="card stat"><b>${vocabDue().length}</b><span>heute fällig</span><div style="margin-top:8px"><a class="btn pri sm" href="#/vocab/review">Wiederholen</a></div></div><div class="card stat"><b>${vocabStarted()}</b><span>begonnen</span></div><div class="card stat"><b>${vocabLearned()}</b><span>gefestigt (Box ≥ 3)</span></div></div>
   <div class="row" style="margin:16px 0"><input type="text" id="vs" placeholder="Wort suchen (Deutsch oder Englisch)…" style="max-width:340px"><button id="newBtn" class="pri">${S.settings.dailyNew} neue Wörter (aktueller Stand)</button></div><div id="vsr"></div>
-  ${LEVELS.map(l=>`<h2><span class="lvl">${l}</span> ${levelUnlocked(l)?'':'<span class="pill">gesperrt – Vorschau möglich</span>'}</h2><div class="grid g3">${decks.filter(x=>x.d.level===l).map(x=>`<div class="card click" data-deck="${x.d.id}"><b>${esc(x.d.theme)}</b><div class="small muted">${x.n} Wörter · ${x.ln} gefestigt</div><div class="bar ok" style="margin-top:6px"><i style="width:${x.n?x.ln/x.n*100:0}%"></i></div></div>`).join('')}</div>`).join('')}`;
+  ${LEVELS.map(l=>`<h2><span class="lvl">${l}</span></h2><div class="grid g3">${decks.filter(x=>x.d.level===l).map(x=>`<div class="card click" data-deck="${x.d.id}"><b>${esc(x.d.theme)}</b><div class="small muted">${x.n} Wörter · ${x.ln} gefestigt</div><div class="bar ok" style="margin-top:6px"><i style="width:${x.n?x.ln/x.n*100:0}%"></i></div></div>`).join('')}</div>`).join('')}`;
   $$('[data-deck]').forEach(c=>c.onclick=()=>nav('#/deck/'+c.dataset.deck));
-  $('#newBtn').onclick=()=>{const lv=LEVELS.filter(levelUnlocked);const fresh=cards().filter(c=>lv.includes(c.level)&&!S.vocab[c.id]);fresh.sort((a,b)=>LEVELS.indexOf(a.level)-LEVELS.indexOf(b.level));vocabSession(fresh.slice(0,S.settings.dailyNew),'Neue Wörter','#/vocab')};
-  $('#vs').oninput=e=>{const q=e.target.value.trim().toLowerCase();if(q.length<2){$('#vsr').innerHTML='';return}const r=cards().filter(c=>(c.de+' '+c.en).toLowerCase().includes(q)).slice(0,30);$('#vsr').innerHTML=`<div class="card"><table class="t">${r.map(c=>`<tr><td>${sayBtn(nounStr(c))}</td><td>${artSpan(c)}${c.plural?` <span class="small muted">Pl. ${esc(c.plural)}</span>`:''}${c.forms?` <span class="small muted">(${esc(c.forms)})</span>`:''}</td><td>${esc(c.en)}</td><td><span class="lvl">${c.level}</span></td><td class="small muted">${esc(c.exDe)}</td></tr>`).join('')||'<tr><td>Nichts gefunden.</td></tr>'}</table></div>`}};
+  $('#newBtn').onclick=()=>{const lv=LEVELS.filter(levelReached);const fresh=cards().filter(c=>lv.includes(c.level)&&!S.vocab[c.id]);fresh.sort((a,b)=>LEVELS.indexOf(a.level)-LEVELS.indexOf(b.level));vocabSession(fresh.slice(0,S.settings.dailyNew),'Neue Wörter','#/vocab')};
+  $('#vs').oninput=e=>{const q=e.target.value.trim().toLowerCase();if(q.length<2){$('#vsr').innerHTML='';return}const r=cards().filter(c=>(c.de+' '+c.en).toLowerCase().includes(q)).slice(0,30);$('#vsr').innerHTML=`<div class="card"><table class="t">${r.map(c=>`<tr><td class="nw">${sayBtn(nounStr(c))}${starBtn(nounStr(c),c.en,c.level+' · '+(c.theme||''),c.id)}</td><td>${artSpan(c)}${c.plural?` <span class="small muted">Pl. ${esc(c.plural)}</span>`:''}${c.forms?` <span class="small muted">(${esc(c.forms)})</span>`:''}</td><td>${esc(c.en)}</td><td><span class="lvl">${c.level}</span></td><td class="small muted">${esc(c.exDe)}</td></tr>`).join('')||'<tr><td>Nichts gefunden.</td></tr>'}</table></div>`}};
 R.deck=function(id){const d=VOCAB.find(x=>x.id===id);if(!d)return R.vocab();const cs=cards().filter(c=>c.deck===id);
   main().innerHTML=`<a href="#/vocab" class="small">← Wortschatz</a><h1><span class="lvl">${d.level}</span> ${esc(d.theme)}</h1><p class="sub">${cs.length} Wörter${d.note?' · '+esc(d.note):''}</p>
   <div class="row" style="margin-bottom:14px"><button class="pri" id="l1">Neue lernen</button><button id="l2">Alle abfragen</button><button id="l3">Nur Artikel-Training</button></div>
-  <div class="card"><table class="t">${cs.map(c=>`<tr><td>${sayBtn(nounStr(c))}</td><td>${artSpan(c)}${c.plural?` <span class="small muted">· Pl. ${esc(c.plural)}</span>`:''}${c.forms?` <span class="small muted">(${esc(c.forms)})</span>`:''}</td><td>${esc(c.en)}</td><td class="small muted">${c.exDe?sayBtn(c.exDe)+' '+esc(c.exDe):''}</td><td>${S.vocab[c.id]?`<span class="pill ${S.vocab[c.id].box>=3?'ok':''}">Box ${S.vocab[c.id].box}</span>`:''}</td></tr>`).join('')}</table></div>`;
+  <div class="card"><table class="t">${cs.map(c=>`<tr><td class="nw">${sayBtn(nounStr(c))}${starBtn(nounStr(c),c.en,d.level+' · '+d.theme,c.id)}</td><td>${artSpan(c)}${c.plural?` <span class="small muted">· Pl. ${esc(c.plural)}</span>`:''}${c.forms?` <span class="small muted">(${esc(c.forms)})</span>`:''}</td><td>${esc(c.en)}</td><td class="small muted">${c.exDe?sayBtn(c.exDe)+' '+esc(c.exDe):''}</td><td>${S.vocab[c.id]?`<span class="pill ${S.vocab[c.id].box>=3?'ok':''}">Box ${S.vocab[c.id].box}</span>`:''}</td></tr>`).join('')}</table></div>`;
   $('#l1').onclick=()=>vocabSession(cs.filter(c=>!S.vocab[c.id]).slice(0,S.settings.dailyNew),d.theme,'#/deck/'+id);
   $('#l2').onclick=()=>vocabSession(cs.map(c=>{S.vocab[c.id]=S.vocab[c.id]||{box:1,reps:0,lapses:0,due:today()};return c}),d.theme,'#/deck/'+id);
   $('#l3').onclick=()=>{const ns=cs.filter(c=>c.art);if(!ns.length)return toast('Keine Nomen in diesem Thema.');runSession({title:'Artikel: '+d.theme,back:'#/deck/'+id,items:shuffle(ns).map(c=>({type:'m',prompt:'___ '+c.lemma+'  ('+c.en+')',correct:c.art,options:['der','die','das'],answers:[c.art],cat:'gender',src:'vocab',key:'v:'+c.id+':art',spec:'v|'+c.id+'|prod',level:c.level,card:c})),onItem:(it,ok)=>{if(S.vocab[it.card.id])vReview(it.card,ok)}})}};
@@ -5412,7 +5512,7 @@ R.errors=function(sub,arg){
   $('#madd').onclick=()=>{const w=$('#mw').value.trim(),r=$('#mr').value.trim();if(!w||!r)return toast('Bitte falsche und richtige Version eingeben.');const spec='man|'+w.replace(/\|/g,'/')+'|'+r.replace(/\|/g,'/')+'|'+$('#mn').value.replace(/\|/g,'/');
     S.errors.push({id:'e'+Date.now().toString(36),key:'man:'+hash(spec),spec,src:'manual',cat:$('#mc').value,given:w,exp:r,ts:Date.now(),date:today(),count:1,streak:0,due:today(),closed:false});save();updateBadge();toast('Fehler gespeichert.');R.errors()}};
 function catTrain(cat){const c=META.cats[cat]||{n:cat};const errs=openErrors().filter(e=>e.cat===cat).map(e=>itemFromSpec(e.spec,e)).filter(Boolean);
-  const pool=[];UNITS.filter(u=>unitUnlocked(u)).forEach(u=>unitItems(u).forEach(it=>{if(it.cat===cat||(u.cat===cat))pool.push(it)}));
+  const pool=[];UNITS.filter(u=>unitReached(u)).forEach(u=>unitItems(u).forEach(it=>{if(it.cat===cat||(u.cat===cat))pool.push(it)}));
   const extra=sample(pool.filter(p=>!errs.find(e=>e.key===p.key)),Math.max(0,15-errs.length));
   const rel=UNITS.filter(u=>u.cat===cat||(u.tags||[]).includes(cat));
   main().innerHTML=`<a href="#/errors" class="small">← Fehlertraining</a><h1>${esc(c.n)}</h1><p class="sub">${esc(c.d||'')}</p><div class="gram" style="padding-top:14px">${TH(c.tip||'',(IC().cats||{})[cat])}</div>
@@ -5421,10 +5521,10 @@ function catTrain(cat){const c=META.cats[cat]||{n:cat};const errs=openErrors().f
   $('#go').onclick=()=>runSession({title:'Gezielt: '+c.n,items:shuffle(errs.concat(extra)),back:'#/errors/cat/'+cat})}
 
 /* DICTATION & SHADOWING (TTS based) */
-R.dictation=function(uid){const pool=[];const us=uid?[unitById(uid)]:UNITS.filter(unitUnlocked);us.forEach(u=>(u.examples||[]).forEach(e=>pool.push({u,s:e[0]})));
+R.dictation=function(uid){const pool=[];const us=uid?[unitById(uid)]:UNITS.filter(unitReached);us.forEach(u=>(u.examples||[]).forEach(e=>pool.push({u,s:e[0]})));
   const items=sample(pool,uid?pool.length:12).map(p=>({type:'d',prompt:'',answers:[p.s],cat:'listening',src:'dict',key:'d:'+hash(p.s),spec:'dict|'+p.s,level:p.u.level}));
   runSession({title:'Diktat',items,back:uid?'#/unit/'+uid+'/exs':'#/listen'})};
-R.shadow=function(uid){const pool=[];const us=uid?[unitById(uid)]:UNITS.filter(unitUnlocked);us.forEach(u=>(u.examples||[]).forEach(e=>pool.push(e[0])));
+R.shadow=function(uid){const pool=[];const us=uid?[unitById(uid)]:UNITS.filter(unitReached);us.forEach(u=>(u.examples||[]).forEach(e=>pool.push(e[0])));
   shadowSession(uid?pool:sample(pool,10),uid?'#/unit/'+uid+'/exs':'#/speak')};
 function shadowSession(sents,back){let i=0,scores=[];
   function show(){if(i>=sents.length){main().innerHTML=`<div class="quiz"><div class="qcard result"><div class="big">${scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length*100):0}%</div><p>Durchschnittliche Erkennungsquote</p><a class="btn pri" href="${back}">Fertig</a></div></div>`;return}
@@ -5432,7 +5532,7 @@ function shadowSession(sents,back){let i=0,scores=[];
     <div class="qcard"><div class="qtype">Nachsprechen</div><div class="qprompt">${esc(s)}</div><div class="row"><button id="pl">▶ Vorsprechen</button><button id="sl">▶ Langsam</button><span class="spacer"></span>${REC?'<button class="mic" id="mic" title="Sprechen">🎤</button>':''}</div>
     ${REC?'':`<div style="margin-top:14px"><textarea id="dict" style="min-height:70px" placeholder="Tippen Sie hier, dann auf das Mikrofon Ihrer Tastatur und sprechen Sie den Satz (Tastatur-Sprache: Deutsch)."></textarea><div class="row" style="margin-top:8px"><button class="pri" id="dchk">Aussprache prüfen</button><span class="small muted">Die Diktierfunktion der Tastatur erkennt, was Sie gesagt haben.</span></div></div>`}
     <div id="out" style="margin-top:14px"></div><div class="qfoot"><button id="nx" class="pri">Weiter</button></div></div></div>`;
-    $('#pl').onclick=()=>say(s);$('#sl').onclick=()=>say(s,0.7);setTimeout(()=>say(s),300);
+    $('#pl').onclick=()=>say(s);$('#sl').onclick=()=>saySlow(s);setTimeout(()=>say(s),300);
     $('#nx').onclick=()=>{i++;show()};
     const evalS=t=>{const sc=speechScore(s,t);scores.push(sc.score);hist().n++;if(sc.score>=0.85)hist().ok++;addXP(2);if(sc.missed.length)logPron(s,sc.missed,t);
         $('#out').innerHTML=`<div class="fb ${sc.score>=0.85?'ok':sc.score>=0.6?'warn':'bad'}"><b class="h">${Math.round(sc.score*100)}% erkannt</b><div>Erkannt: „${esc(t)}“</div><div style="margin-top:6px">${sc.html}</div>${sc.missed.length?`<div class="small" style="margin-top:6px">Nicht erkannt: ${sc.missed.map(w=>`<b>${esc(w)}</b> ${sayBtn(w)}`).join(' ')}</div>`:''}</div>`};
@@ -5661,7 +5761,7 @@ R.settings=function(){const s=S.settings;loadVoices();
   <div class="card" style="margin-top:12px"><h3>Lernen</h3>
    <label class="row small"><input type="checkbox" id="ss" ${s.swissSS?'checked':''}> Schweizer Rechtschreibung: „ss“ statt „ß“ akzeptieren (in der Schweiz Standard; in Prüfungen in der Schweiz zulässig)</label>
    <label class="row small"><input type="checkbox" id="tl" ${s.translit?'checked':''}> ae/oe/ue statt ä/ö/ü akzeptieren (nicht empfohlen)</label>
-   <label class="row small"><input type="checkbox" id="fn" ${s.freeNav?'checked':''}> Freie Navigation: alle Niveaus/Einheiten ohne Sperre öffnen</label>
+   
    <label class="row small">Neue Wörter pro Sitzung <input type="number" id="dn" value="${s.dailyNew}" min="3" max="50" style="width:70px"></label>
    <label class="row small">Tagesziel XP <input type="number" id="gx" value="${s.goalXP}" min="10" max="500" style="width:70px"></label>
    <label class="row small">Darstellung <select id="th" style="width:160px"><option value="auto">System</option><option value="light" ${s.theme==='light'?'selected':''}>Hell</option><option value="dark" ${s.theme==='dark'?'selected':''}>Dunkel</option></select></label>
@@ -5673,7 +5773,7 @@ R.settings=function(){const s=S.settings;loadVoices();
    <div class="row"><button class="pri" id="ex">⬇ Backup exportieren (.json)</button><label class="btn">⬆ Backup importieren<input type="file" id="im" accept=".json" style="display:none"></label><button id="md">⬇ Fehlerprotokoll + Fortschritt (.md)</button><span class="spacer"></span><button id="rs" style="color:var(--bad)">Alles zurücksetzen</button></div></div>`;
     $('#vo').onchange=e=>{s.voice=e.target.value;save()};$('#vt').onclick=()=>say('Grüezi! Ich lerne Deutsch, weil ich mich in der Schweiz einbürgern lassen möchte.');
   $('#rt').oninput=e=>{s.rate=+e.target.value;$('#rtv').textContent=s.rate;save()};$('#rl').onchange=e=>{s.recLang=e.target.value;save()};
-  $('#ss').onchange=e=>{s.swissSS=e.target.checked;save()};$('#tl').onchange=e=>{s.translit=e.target.checked;save()};$('#fn').onchange=e=>{s.freeNav=e.target.checked;save()};
+  $('#ss').onchange=e=>{s.swissSS=e.target.checked;save()};$('#tl').onchange=e=>{s.translit=e.target.checked;save()};
   $('#dn').onchange=e=>{s.dailyNew=Math.max(3,+e.target.value||12);save()};$('#gx').onchange=e=>{s.goalXP=Math.max(10,+e.target.value||60);save();renderNavFoot()};
   $('#th').onchange=e=>{s.theme=e.target.value;applyTheme();save()};
   $('#ex').onclick=async()=>{await backupNow();R.settings()};
@@ -5702,7 +5802,7 @@ function profName(){return ''}
 /* single account. Earlier versions had two profiles (p1/p2) on a device: take over the one with the most progress */
 function loadProfilesLocal(){try{if(lsGet(KEY))return;let best=null,bs=-1;for(const id of ['p1','p2']){const raw=lsGet(KEY+'.'+id);if(!raw)continue;try{const d=JSON.parse(raw);const sc=Object.keys(d.history||{}).length*1000+(d.ts||0)/1e9;if(sc>bs){bs=sc;best=raw}}catch(e){}}
   if(best){lsSet(KEY,best)}}catch(e){}}
-const APP_VER='2026-11-05c';
+const APP_VER='2026-11-08a';
 function isPinned(){return lsGet('dt.pin')==='1'}
 /* keep the pinned bar on screen even where position:fixed is not honoured (phone keyboard open, zoom, some in-app viewers):
    measure where it really is and shift it back into the visible area */
@@ -5936,6 +6036,7 @@ function mockSpeak(){const E=window.EXAM_B1,P=E.sprechen,run=mockRun('sprechen')
     if(e.target.id==='mkAgain'){delete mockS().run.sprechen;save();route()}}}
 function mockSpeakTotal(crit,aus,run){const p=[1,2,3].map(n=>mockRubricPts('s'+n,crit,run,MK_SP_MAX[n])).concat([mockRubricPts('saus',aus,run,MK_SP_MAX.aus)]);return p.includes('–')?'–':p.reduce((a,b)=>a+b,0)}
 
+initSelSave&&document.readyState!=='loading'?initSelSave():document.addEventListener('DOMContentLoaded',()=>initSelSave());
 /* boot */
 i18nBuild();loadProfilesLocal();load();applyTheme();updateBadge();renderNavFoot();renderProfileChip();CUR=decR(location.hash.slice(1))||'home';route();pkLoadAll();setTimeout(()=>BK.auto(),2500);
 window.__DT={S:()=>S,cards,UNITS,classify,check,parseItem,pluralOf,save};
