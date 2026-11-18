@@ -404,6 +404,23 @@ table.sv input{width:100%;min-width:120px}
 /* phones: wide tables scroll inside themselves instead of widening the page (which pushed the top bar off screen) */
 @media (max-width:860px){main table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}main{overflow-wrap:anywhere}main pre{max-width:100%;overflow-x:auto}}
 
+/* Boink-Ecke */
+.boinkpage{max-width:640px;margin:0 auto}
+.bk-top{margin-bottom:6px}
+.bk-card{display:flex;flex-direction:column;align-items:center;padding:18px 14px 16px}
+.pigbox.big{min-height:230px;margin:6px 0 4px}
+.pigbox.big .pig{width:240px;height:180px}
+.bk-stats{display:flex;justify-content:center;gap:28px;margin-top:10px;text-align:center}
+.bk-stats div{display:flex;flex-direction:column}
+.bk-stats b{font-size:26px;font-variant-numeric:tabular-nums;color:#d0587a}
+.bk-back{display:flex;flex-direction:column;align-items:center;gap:6px;margin:20px 0 8px;text-align:center}
+.bk-back button.big{min-width:min(100%,320px)}
+.boinktile b{color:#d0587a}
+@media (max-width:640px){.pigbox.big .pig{width:210px;height:158px}.bk-stats{gap:18px}}
+.pigbox.big .pig-n{display:none}
+@media (max-width:520px){.grid.sec{grid-template-columns:1fr 1fr}}
+.bk-top{justify-content:space-between}.bk-snd.off{opacity:.7}
+
 </style>
 
 <header id="mbar"><button type="button" id="menuBtn" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button><span class="mtitle notr" id="mTitle">Deutsch A1–B2</span><span id="mSlot"></span></header>
@@ -416,6 +433,7 @@ table.sv input{width:100%;min-width:120px}
       <a href="#/path" data-r="path"><i>▤</i>Lernpfad</a>
       <a href="#/vocab" data-r="vocab"><i>◫</i>Wortschatz</a>
       <a href="#/saved" data-r="saved"><i>☆</i>Merkliste</a>
+      <a href="#/boink" data-r="boink"><i>🐽</i>Boink-Ecke</a>
       <a href="#/errors" data-r="errors"><i>⚑</i>Fehlertraining<span id="errBadge" class="badge"></span></a>
       <a href="#/listen" data-r="listen"><i>♪</i>Hören</a>
       <a href="#/speak" data-r="speak"><i>◉</i>Sprechen</a>
@@ -642,6 +660,9 @@ Object.assign(window.I18N.dict,{'Deutsch, z. B. die Gemeinde':'German, e.g. die 
 window.I18N.patterns.push([/^Veraltete Datei\(en\): (.+) – bitte die aktuellen Dateien aus German › App › Audio wählen \(8 Pakete\)\.$/,'Outdated file(s): $1 – please choose the current files from German › App › Audio (8 packs).']);
 Object.assign(window.I18N.dict,{'Tippen Sie auf die Nase!':'Tap the snout!'});
 Object.assign(window.I18N.dict,{'Rüssli (Maskottchen) anzeigen':'Show Rüssli (mascot)'});
+Object.assign(window.I18N.dict,{'🐽 Boink-Ecke':'🐽 Boink corner','Boink-Ecke':'Boink corner','Kurze Pause?':'Quick break?','jetzt':'now','insgesamt':'total','Rekord am Stück':'best streak','← Übersicht':'← Overview'});
+window.I18N.patterns.push([/^(\d+) Boinks$/,'$1 boinks']);
+Object.assign(window.I18N.dict,{'🐽 Boink-Ton':'🐽 Boink sound'});
 
 /* English versions of explanatory content (rules, grammar explanations, task instructions, exam info).
    German example sentences and forms are kept on purpose – they are what you learn. */
@@ -5487,10 +5508,11 @@ R.home=function(){
   ${pigOn()?pigSay(...homeMood(due,ct),'rs-home'):''}
   ${ct?`<div class="card hero-cont"><div class="hc-l"><div class="small muted">${ct.resume?'Hier haben Sie aufgehört':ct.start?'Ihr Kurs beginnt hier':'Als Nächstes im Kurs'}</div><h2 class="hc-t"><span class="lvl">${ct.u.level}</span> ${U(ct.u.title)}</h2><div class="small muted">Abschnitt: ${TABNAME[ct.tab]||'Grammatik'}</div>${levelBarHTML(ct.u.level)}</div><button class="pri big" id="contBtn">▶ ${ct.start?'Kurs starten':'Weiter lernen'}</button></div>`
    :`<div class="card hero-cont"><div class="hc-l"><h2 class="hc-t">Alle Einheiten abgeschlossen 🎉</h2><div class="small muted">Jetzt Niveautests und Prüfungstraining.</div></div><button class="pri big" onclick="nav('#/exam')">▶ Zur Prüfung</button></div>`}
-  <div class="grid g3 sec">
+  <div class="grid g4 sec">
     <div class="card click mini" onclick="nav('#/vocab/review')"><b>↻ Wiederholen</b><span class="small muted">${due} Wörter fällig</span></div>
     <div class="card click mini" onclick="nav('#/errors/train')"><b>⚑ Fehler korrigieren</b><span class="small muted">${errs} Fehler fällig</span></div>
     <div class="card click mini" onclick="nav('#/saved')"><b>☆ Merkliste</b><span class="small muted">${nsv} gemerkt</span></div>
+    <div class="card click mini boinktile" onclick="nav('#/boink')"><b>🐽 Boink-Ecke</b><span class="small muted">${S.boinks?S.boinks+' Boinks':'Kurze Pause?'}</span></div>
   </div>
   <div class="grid g4">
     <div class="card stat"><b>${streak()}</b><span>Tage in Folge</span></div>
@@ -5512,6 +5534,24 @@ R.home=function(){
   const cb=$('#contBtn');if(cb)cb.onclick=()=>nav('#/unit/'+ct.u.id+'/'+ct.tab);};
 function backupNag(){const lb=S.lastBackup;if(lb&&daysBetween(lb,today())<7)return '';return `<div class="fb warn small">${L('Ihr Fortschritt wird im Browser gespeichert.','Your progress is stored in the browser.')} ${lb?L('Letztes Backup: '+lb+'.','Last backup: '+lb+'.'):L('Noch kein Backup.','No backup yet.')} <a href="#" onclick="event.preventDefault();backupNow()">💾 Jetzt sichern</a></div>`}
 function catStats(){const m={};for(const e of S.errors){const c=m[e.cat]=m[e.cat]||{cat:e.cat,open:0,total:0};c.total+=e.count||1;if(!e.closed)c.open++}return Object.values(m).sort((a,b)=>b.open-a.open||b.total-a.total)}
+
+/* BOINK-ECKE: boink the snout any time */
+R.boink=function(){const ct=continueTarget(),best=S.boinkBest||0;
+  main().innerHTML=`<div class="boinkpage">
+  <div class="row bk-top"><a class="btn sm" href="#/home">← Übersicht</a><button class="sm bk-snd" id="bkSnd"></button></div>
+  <h1>🐽 Boink-Ecke</h1>
+  ${pigSay('excited','Boinken Sie, so viel Sie wollen! Wenn Sie fertig sind, geht es unten direkt zurück zum Lernen.','Boink as much as you like! When you are done, the button below takes you straight back to learning.')}
+  <div class="card bk-card"><div id="bkAnchor"></div>
+    <div class="bk-stats"><div><b id="bkNow">0</b><span class="small muted">jetzt</span></div><div><b id="bkTot">${S.boinks||0}</b><span class="small muted">insgesamt</span></div><div><b id="bkBest">${best}</b><span class="small muted">Rekord am Stück</span></div></div>
+  </div>
+  <div class="bk-back">${ct?`<button class="pri big" id="bkCont">▶ Weiter lernen</button><div class="small muted">${ct.u.level} · ${esc(ct.u.title)}</div>`:`<button class="pri big" onclick="nav('#/exam')">▶ Zur Prüfung</button>`}</div>
+  </div>`;
+  FX.pig($('#bkAnchor'),{force:true,big:true,delay:0.15});
+  const box=$('.pigbox'),b=box&&box.querySelector('.pig');
+  if(b){b.onclick=()=>{FX.boink(b,box);const n=FX.pn;$('#bkNow').textContent=n;$('#bkTot').textContent=S.boinks||n;if(n>(S.boinkBest||0)){S.boinkBest=n;$('#bkBest').textContent=n}}}
+  const sb=$('#bkSnd'),sl=()=>{const on=FX.bsnd();sb.textContent=on?'🔊 '+L('Ton an','Sound on'):'🔇 '+L('Ton aus','Sound off');sb.classList.toggle('off',!on)};sl();
+  sb.onclick=()=>{S.settings.boinkSound=!FX.bsnd();save();sl();if(FX.bsnd())FX.boing()};
+  const cb=$('#bkCont');if(cb)cb.onclick=()=>nav('#/unit/'+ct.u.id+'/'+ct.tab)};
 
 /* SAVED (Merkliste) */
 R.saved=function(){const list=(S.saved||[]).slice().reverse();
@@ -5898,6 +5938,7 @@ R.settings=function(){const s=S.settings;loadVoices();
    <label class="row small"><input type="checkbox" id="fxo" ${s.fx!==false?'checked':''}> Animationen und Feiern (Konfetti, Serien, Sterne)</label>
    <label class="row small"><input type="checkbox" id="pgo" ${s.pig!==false?'checked':''}> Rüssli (Maskottchen) anzeigen</label>
    <label class="row small"><input type="checkbox" id="sno" ${s.sound===true?'checked':''}> Töne bei richtig / falsch</label>
+   <label class="row small"><input type="checkbox" id="bso" ${s.boinkSound!==false?'checked':''}> 🐽 Boink-Ton</label>
    <div class="row"><button class="sm" id="fxt">✨ Animation testen</button></div></div>
   <div class="card" style="margin-top:12px"><h3>Daten sichern</h3><p class="small muted">${L('Der Fortschritt liegt im Browser-Speicher dieses Computers. Letztes Backup: '+(S.lastBackup||'nie')+'.','Progress is stored in this device’s browser. Last backup: '+(S.lastBackup||'never')+'.')}</p>
    ${BK.ok?`<p class="small">Backup-Ordner: <b id="bkn">${BK.h?esc(BK.h.name):'nicht gewählt'}</b> <button class="sm" id="bkp">📁 Ordner wählen</button><br><span class="muted">Wählen Sie einmal den Ordner „Backup Data“. Danach wird jedes Backup dort gespeichert – und einmal pro Tag automatisch.</span></p>`:`<p class="small muted">${IN_VIEWER?'Online-Version: '+(navigator.canShare?'Beim Backup öffnet sich „Teilen“: pCloud wählen → Ordner „Backup Data“.':'Das Backup wird heruntergeladen – bitte in den Ordner „Backup Data“ verschieben.'):(navigator.canShare?'Handy: Beim Backup öffnet sich „Teilen“ – pCloud wählen und den Ordner „Backup Data“ angeben.':'Dieser Browser kann keinen Ordner direkt beschreiben. Das Backup landet in „Downloads“ – bitte in den Ordner „Backup Data“ verschieben.')}</p>`}
@@ -5909,7 +5950,7 @@ R.settings=function(){const s=S.settings;loadVoices();
   $('#th').onchange=e=>{s.theme=e.target.value;applyTheme();save()};
   $('#ex').onclick=async()=>{await backupNow();R.settings()};
   if(BK.ok){BK.load().then(h=>{const n=$('#bkn');if(n&&h)n.textContent=h.name});$('#bkp').onclick=async()=>{const h=await BK.pick();if(h){$('#bkn').textContent=h.name;if(await BK.write(true))toast('💾 Backup gespeichert in „'+h.name+'“.');R.settings()}}}
-  $('#fxo').onchange=e=>{s.fx=e.target.checked;save()};$('#pgo').onchange=e=>{s.pig=e.target.checked;save();brandPig()};$('#sno').onchange=e=>{s.sound=e.target.checked;save();if(s.sound)FX.tone([660,880],0.12)};
+  $('#fxo').onchange=e=>{s.fx=e.target.checked;save()};$('#pgo').onchange=e=>{s.pig=e.target.checked;save();brandPig()};$('#sno').onchange=e=>{s.sound=e.target.checked;save();if(s.sound)FX.tone([660,880],0.12)};$('#bso').onchange=e=>{s.boinkSound=e.target.checked;save();if(s.boinkSound)FX.boing()};
   $('#fxt').onclick=()=>{FX.confetti(1.2);FX.banner('Super gemacht!','So sieht eine Feier aus.','🎉','excited');FX.tone([523,659,784,1047],0.15)};
   $('#im').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.settings||!d.units)throw 0;S=d;load2();save();toast('Backup importiert.');route()}catch(x){toast('Ungültige Backup-Datei.')}};r.readAsText(f)};
   $('#md').onclick=()=>download('german-trainer-report-'+today()+'.md',mdReport(),'text/markdown');
@@ -5933,7 +5974,7 @@ function profName(){return ''}
 /* single account. Earlier versions had two profiles (p1/p2) on a device: take over the one with the most progress */
 function loadProfilesLocal(){try{if(lsGet(KEY))return;let best=null,bs=-1;for(const id of ['p1','p2']){const raw=lsGet(KEY+'.'+id);if(!raw)continue;try{const d=JSON.parse(raw);const sc=Object.keys(d.history||{}).length*1000+(d.ts||0)/1e9;if(sc>bs){bs=sc;best=raw}}catch(e){}}
   if(best){lsSet(KEY,best)}}catch(e){}}
-const APP_VER='2026-11-17e';
+const APP_VER='2026-11-18c';
 function isPinned(){return lsGet('dt.pin')==='1'}
 /* keep the pinned bar on screen even where position:fixed is not honoured (phone keyboard open, zoom, some in-app viewers):
    measure where it really is and shift it back into the visible area */
@@ -6015,8 +6056,13 @@ const _toast=toast;toast=m=>_toast(LANG()==='de'?m:(trLookup(nrm(m))?(LANG()==='
 const FX={
   on(){return S&&S.settings.fx!==false&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)},
   snd(){return S&&S.settings.sound===true},
+  bsnd(){return !!S&&S.settings.boinkSound!==false},
+  /* one shared audio engine; phones start it "asleep" – wake it and only then schedule the sound */
+  ctx(fn){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const C=FX.ac=FX.ac||new AC();
+    const go=()=>{try{fn(C,C.currentTime+0.01)}catch(e){}};if(C.state!=='running'){const r=C.resume();if(r&&r.then)r.then(go,go);else go()}else go()}catch(e){}},
+  unlock(){try{const C=FX.ac;if(C&&C.state!=='running')C.resume()}catch(e){}},
   layer(){let l=document.getElementById('fxl');if(!l){l=document.createElement('div');l.id='fxl';l.className='notr';document.body.appendChild(l)}return l},
-  tone(freqs,dur){if(!FX.snd())return;try{const C=FX.ac=FX.ac||new (window.AudioContext||window.webkitAudioContext)();let t=C.currentTime;freqs.forEach(f=>{const o=C.createOscillator(),g=C.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.12,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);o.connect(g);g.connect(C.destination);o.start(t);o.stop(t+dur+0.02);t+=dur*0.55})}catch(e){}},
+  tone(freqs,dur){if(!FX.snd())return;FX.ctx((C,t)=>{freqs.forEach(f=>{const o=C.createOscillator(),g=C.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.12,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);o.connect(g);g.connect(C.destination);o.start(t);o.stop(t+dur+0.02);t+=dur*0.55})})},
   float(text,el,cls){if(!FX.on())return;const r=(el||document.body).getBoundingClientRect();const d=document.createElement('div');d.className='fx-float '+(cls||'');d.textContent=text;d.style.left=(r.left+r.width/2)+'px';d.style.top=(r.top+Math.min(r.height/2,40))+'px';FX.layer().appendChild(d);setTimeout(()=>d.remove(),1300)},
   burst(el,n,colors){if(!FX.on()||!el)return;const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;const L=FX.layer();colors=colors||['#2e9e5b','#f2b705','#c8102e','#3a7bd5','#9b59b6'];
     for(let i=0;i<(n||14);i++){const p=document.createElement('i');p.className='fx-dot';const a=Math.random()*Math.PI*2,dist=40+Math.random()*70;p.style.left=cx+'px';p.style.top=cy+'px';p.style.background=colors[i%colors.length];p.style.setProperty('--dx',Math.cos(a)*dist+'px');p.style.setProperty('--dy',Math.sin(a)*dist+'px');L.appendChild(p);setTimeout(()=>p.remove(),800)}},
@@ -6033,14 +6079,14 @@ const FX={
   wrong(){const card=$('.qcard');FX.pop(card,'fx-shake',1);FX.tone([220,180],0.14)},
   /* pig snout: pops up on the result screen, tap = BOINK (squash, boing sound, buzz, count) */
   pn:0,
-  boing(){if(!FX.snd())return;try{const C=FX.ac=FX.ac||new (window.AudioContext||window.webkitAudioContext)();if(C.state==='suspended')C.resume();const t=C.currentTime;
-    const o=C.createOscillator(),g=C.createGain(),lf=C.createOscillator(),lg=C.createGain();o.type='sine';
+  boing(){if(!FX.bsnd())return;try{if(navigator.audioSession&&navigator.audioSession.type!=='playback')navigator.audioSession.type='playback'}catch(e){}
+    FX.ctx((C,t)=>{const o=C.createOscillator(),g=C.createGain(),lf=C.createOscillator(),lg=C.createGain();o.type='sine';
     o.frequency.setValueAtTime(180,t);o.frequency.exponentialRampToValueAtTime(640,t+0.05);o.frequency.exponentialRampToValueAtTime(130,t+0.34);
     lf.frequency.value=26;lg.gain.value=38;lf.connect(lg);lg.connect(o.frequency);
     g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.22,t+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t+0.36);
-    o.connect(g);g.connect(C.destination);o.start(t);lf.start(t);o.stop(t+0.4);lf.stop(t+0.4)}catch(e){}},
-  pig(after){if(!FX.on()||!after||$('.pigbox'))return;FX.pn=0;const box=document.createElement('div');box.className='pigbox';box.style.setProperty('--pd',(FX.pigDelay||1.1)+'s');FX.pigDelay=0;
-    box.innerHTML=`<button type="button" class="pig" aria-label="${L('Schweinenase – antippen','Pig snout – tap it')}"><svg class="pig-s" viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="86" rx="40" ry="4" fill="rgba(0,0,0,.10)"/><rect x="14" y="10" width="92" height="70" rx="34" fill="#f7adbd" stroke="#e07a93" stroke-width="3"/><ellipse cx="42" cy="26" rx="14" ry="6" fill="#fff" opacity=".35" transform="rotate(-18 42 26)"/><ellipse class="nos" cx="42" cy="46" rx="9" ry="14" fill="#a8405d" transform="rotate(8 42 46)"/><ellipse class="nos" cx="78" cy="46" rx="9" ry="14" fill="#a8405d" transform="rotate(-8 78 46)"/></svg></button><div class="pig-hint small muted"><span class="pig-t">Tippen Sie auf die Nase!</span> <span class="pig-n notr"></span></div>`;
+    o.connect(g);g.connect(C.destination);o.start(t);lf.start(t);o.stop(t+0.4);lf.stop(t+0.4)})},
+  pig(after,opt){opt=opt||{};if((!FX.on()&&!opt.force)||!after||$('.pigbox'))return;FX.pn=0;const box=document.createElement('div');box.className='pigbox'+(opt.big?' big':'');if(opt.delay!=null)FX.pigDelay=opt.delay;box.style.setProperty('--pd',(FX.pigDelay||1.1)+'s');FX.pigDelay=0;
+    box.innerHTML=`<button type="button" class="pig" aria-label="${L('Schweinenase – antippen','Pig snout – tap it')}"><svg class="pig-s" viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="86" rx="40" ry="4" fill="rgba(0,0,0,.10)"/><rect x="14" y="10" width="92" height="70" rx="34" fill="#f7adbd" stroke="#e07a93" stroke-width="3"/><ellipse cx="42" cy="26" rx="14" ry="6" fill="#fff" opacity=".35" transform="rotate(-18 42 26)"/><ellipse class="nos" cx="42" cy="46" rx="9" ry="14" fill="#a8405d"/><ellipse class="nos" cx="78" cy="46" rx="9" ry="14" fill="#a8405d"/></svg></button><div class="pig-hint small muted"><span class="pig-t">Tippen Sie auf die Nase!</span> <span class="pig-n notr"></span></div>`;
     after.insertAdjacentElement('afterend',box);trApply&&trApply(box);const b=box.querySelector('.pig');b.onclick=()=>FX.boink(b,box)},
   boink(btn,box){const n=++FX.pn;if(S){S.boinks=(S.boinks||0)+1;clearTimeout(FX.pst);FX.pst=setTimeout(save,1500)}const sv=btn.querySelector('svg');sv.classList.remove('boink');void sv.getBoundingClientRect();sv.style.setProperty('--r',(Math.random()*12-6).toFixed(1)+'deg');sv.classList.add('boink');
     const T=n===1?'BOINK!':n===2?'BOINK BOINK!':['Boink!','Boing!','Oink!','Hihi!','BOINK!!'][Math.floor(Math.random()*5)];FX.float(T,btn,'pig');FX.burst(btn,8,['#f7adbd','#ff8fab','#e07a93','#c94f72']);FX.boing();try{navigator.vibrate&&navigator.vibrate(18)}catch(e){}
@@ -6187,6 +6233,7 @@ initSelSave&&document.readyState!=='loading'?initSelSave():document.addEventList
 document.readyState!=='loading'?initDrawer():document.addEventListener('DOMContentLoaded',()=>initDrawer());
 function brandPig(){const f=$('.brand .flag');if(!f)return;if(pigOn()){f.innerHTML=pigImg('greet','');f.classList.add('pigf')}else{f.textContent='+';f.classList.remove('pigf')}}
 addEventListener('pagehide',()=>{if(FX.pst){clearTimeout(FX.pst);FX.pst=0;save()}});
+['pointerdown','touchend','keydown'].forEach(ev=>addEventListener(ev,()=>FX.unlock(),{capture:true,passive:true}));
 /* boot */
 i18nBuild();loadProfilesLocal();load();applyTheme();updateBadge();renderNavFoot();renderProfileChip();try{brandPig()}catch(e){}CUR=decR(location.hash.slice(1))||'home';route();pkLoadAll();setTimeout(()=>BK.auto(),2500);
 window.__DT={S:()=>S,cards,UNITS,classify,check,parseItem,pluralOf,save};
