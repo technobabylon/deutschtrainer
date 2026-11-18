@@ -421,6 +421,12 @@ table.sv input{width:100%;min-width:120px}
 @media (max-width:520px){.grid.sec{grid-template-columns:1fr 1fr}}
 .bk-top{justify-content:space-between}.bk-snd.off{opacity:.7}
 
+/* Rüssli in the exercise header */
+.qhead .rs-q{width:60px;height:60px;flex:none;margin:-12px -6px -12px 4px}
+.rs-page{margin-top:4px}
+@media (max-width:640px){.qhead .rs-q{width:54px;height:54px}}
+.ovbox{display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+
 </style>
 
 <header id="mbar"><button type="button" id="menuBtn" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button><span class="mtitle notr" id="mTitle">Deutsch A1–B2</span><span id="mSlot"></span></header>
@@ -663,6 +669,7 @@ Object.assign(window.I18N.dict,{'Rüssli (Maskottchen) anzeigen':'Show Rüssli (
 Object.assign(window.I18N.dict,{'🐽 Boink-Ecke':'🐽 Boink corner','Boink-Ecke':'Boink corner','Kurze Pause?':'Quick break?','jetzt':'now','insgesamt':'total','Rekord am Stück':'best streak','← Übersicht':'← Overview'});
 window.I18N.patterns.push([/^(\d+) Boinks$/,'$1 boinks']);
 Object.assign(window.I18N.dict,{'🐽 Boink-Ton':'🐽 Boink sound'});
+Object.assign(window.I18N.dict,{'↶ Rückgängig':'↶ Undo','Rückgängig gemacht – die Antwort zählt wieder als falsch.':'Undone – the answer counts as wrong again.','Als korrekt gespeicherte Antworten':'Answers saved as correct','Entfernt – diese Antwort zählt wieder als falsch.':'Removed – this answer counts as wrong again.','als korrekt gespeichert':'saved as correct','Meine Antwort war auch korrekt':'My answer was also correct'});
 
 /* English versions of explanatory content (rules, grammar explanations, task instructions, exam info).
    German example sentences and forms are kept on purpose – they are what you learn. */
@@ -5364,7 +5371,7 @@ function levelPct(l){const us=levelUnits(l);if(!us.length)return 0;return us.fil
 /* ---------------- session runner ---------------- */
 function runSession(opt){
   // opt: {title, items, back, onItem(it,ok,given), onDone(stats), mode}
-  const items=opt.items.slice();let idx=0,ok=0,combo=0,results=[];const t0=Date.now();
+  const items=opt.items.slice();let idx=0,ok=0,combo=0,results=[];const t0=Date.now();let crun=0,wrun=0;
   if(!items.length){main().innerHTML=`<div class="card">Keine Aufgaben vorhanden. <a href="${opt.back||'#/home'}">Zurück</a></div>`;return}
   function next(){if(idx>=items.length)return finish();renderItem(items[idx])}
   function finish(){const pct=ok/items.length;const st={ok,n:items.length,pct,results,secs:Math.round((Date.now()-t0)/1000)};const lv0=LEVELS.filter(levelReached),ud0=new Set(UNITS.filter(unitDone).map(u=>u.id));opt.onDone&&opt.onDone(st);
@@ -5378,17 +5385,18 @@ function runSession(opt){
   const lvlNow=()=>opt.level||(items[Math.min(idx,items.length-1)]||{}).level||ctxLevel();
   const liveOv=()=>opt.unit?{[opt.unit]:ok/items.length}:null;
   const refreshLv=()=>{const el=$('.lvbar',main());if(el)el.outerHTML=levelBarHTML(lvlNow(),liveOv())};
-  function head(){return `<div class="qhead"><a class="btn sm" href="${opt.back||'#/home'}">✕</a><div class="bar"><i style="width:${idx/items.length*100}%"></i></div><span class="small muted">${idx+1}/${items.length}</span></div>${levelBarHTML(lvlNow(),liveOv())}`}
+  function head(){return `<div class="qhead"><a class="btn sm" href="${opt.back||'#/home'}">✕</a><div class="bar"><i style="width:${idx/items.length*100}%"></i></div><span class="small muted">${idx+1}/${items.length}</span>${pigImg(Date.now()-t0>25*60000?'tired':'concerned','rs-q')}</div>${levelBarHTML(lvlNow(),liveOv())}`}
   function grade(it,given,res,extra){
     hist().n++;if(res.ok){hist().ok++;ok++}addXP(res.ok?3:1);
     let cat=it.cat;if(!res.ok)cat=classify(given,res.best||'',it);
     if(!res.ok)logError(it,given,cat);else errorFixed(it);
     if(res.ok&&res.kind==='punct')logMinor(it,given);
     results.push({it,ok:res.ok,exp:res.best||'',cat});opt.onItem&&opt.onItem(it,res.ok,given);refreshLv();
+    if(res.ok){crun++;wrun=0;qPig(crun>=3?'excited':'happy')}else{wrun++;crun=0;qPig(wrun>=3?'sad':'oops')}
     const fb=$('#fb');const exp=res.best||'';
     let html='';
     if(res.ok){html=`<div class="fb ${res.kind==='exact'?'ok':'warn'}"><b class="h">${res.kind==='exact'?'✓ Richtig':res.kind==='punct'?'✓ Richtig – aber Zeichensetzung prüfen':'✓ Richtig (Umlaut-Umschrift akzeptiert)'}</b>${res.kind!=='exact'?`<div class="ans">${esc(exp)}</div>`:''}${it.explain?`<div style="margin-top:6px">${esc(it.explain)}</div>`:''}</div>`}
-    else{html=`<div class="fb bad">${pigImg('oops','rs-mini')}<b class="h">✗ Nicht ganz – <span class="pill bad">${esc(catName(cat))}</span></b>
+    else{html=`<div class="fb bad"><b class="h">✗ Nicht ganz – <span class="pill bad">${esc(catName(cat))}</span></b>
       <div>Richtig: <span class="ans">${esc(exp)}</span> ${sayBtn(it.type==='g'?fillGaps(it):exp)}</div>
       ${given&&it.type!=='m'?`<div class="small" style="margin-top:6px">Ihr Vergleich: ${diffHTML(given,exp)}</div>`:''}
       ${it.explain?`<div style="margin-top:8px">${esc(it.explain)}</div>`:''}
@@ -5396,7 +5404,19 @@ function runSession(opt){
       ${it.type!=='m'&&it.type!=='o'?`<button class="sm ghost" id="override" style="margin-top:6px">Meine Antwort war auch korrekt</button>`:''}</div>`}
     if(it.card)html+=`<div class="small" style="margin-top:6px">${starBtn(nounStr(it.card),it.card.en,it.card.level+' · '+(it.card.theme||''),it.card.id)} ${esc(nounStr(it.card))} – ${L('merken','save')}</div>`;
     fb.innerHTML=html+(extra||'');if(res.ok){combo++;FX.correct(combo)}else{combo=0;FX.wrong()}
-    const ov=$('#override');if(ov)ov.onclick=()=>{S.accepted[it.key]=(S.accepted[it.key]||[]).concat([String(given)]);const e=S.errors.find(e=>e.key===it.key&&!e.closed&&e.date===today()&&e.count===1);if(e)S.errors.splice(S.errors.indexOf(e),1);else{const e2=S.errors.find(e=>e.key===it.key&&!e.closed);if(e2)e2.count=Math.max(1,e2.count-1)}ok++;results[results.length-1].ok=true;save();updateBadge();ov.replaceWith(Object.assign(document.createElement('span'),{className:'pill ok',textContent:'als korrekt gespeichert'}))};
+    const ov=$('#override');if(ov){const ri=results.length-1,ans=String(given);
+      const wire=()=>{const b=$('#override');if(b)b.onclick=doOv};
+      const doOv=()=>{const undo={};S.accepted[it.key]=(S.accepted[it.key]||[]).concat([ans]);
+        S.accMeta=S.accMeta||{};S.accMeta[it.key+'|'+ans]={p:String(it.prompt||'').replace(/<[^>]+>/g,'').slice(0,140),exp:exp||(it.answers||[])[0]||'',d:today()};
+        const e=S.errors.find(e=>e.key===it.key&&!e.closed&&e.date===today()&&e.count===1);
+        if(e){undo.rm=e;undo.at=S.errors.indexOf(e);S.errors.splice(undo.at,1)}else{const e2=S.errors.find(e=>e.key===it.key&&!e.closed);if(e2){undo.e2=e2;undo.c=e2.count;e2.count=Math.max(1,e2.count-1)}}
+        ok++;results[ri].ok=true;save();updateBadge();qPig('happy');
+        const box=document.createElement('span');box.className='ovbox';box.innerHTML='<span class="pill ok">als korrekt gespeichert</span> <button class="sm ghost" id="ovUndo">↶ Rückgängig</button>';$('#override').replaceWith(box);trApply&&trApply(box);
+        $('#ovUndo').onclick=()=>{const a=S.accepted[it.key]||[];const i=a.lastIndexOf(ans);if(i>=0)a.splice(i,1);if(!a.length)delete S.accepted[it.key];if(S.accMeta)delete S.accMeta[it.key+'|'+ans];
+          if(undo.rm)S.errors.splice(Math.min(undo.at,S.errors.length),0,undo.rm);if(undo.e2)undo.e2.count=undo.c;
+          ok--;results[ri].ok=false;save();updateBadge();qPig('oops');
+          const nb=document.createElement('button');nb.className='sm';nb.id='override';nb.style.marginTop='6px';nb.textContent='Meine Antwort war auch korrekt';box.replaceWith(nb);trApply&&trApply(nb);wire();toast('Rückgängig gemacht – die Antwort zählt wieder als falsch.')}};
+      wire()}
     $('#qfoot').innerHTML=`<button class="pri" id="nx">Weiter</button>${it.type!=='m'?sayBtn(it.type==='g'?fillGaps(it):exp):''}`;
     const nx=$('#nx');nx.focus();nx.onclick=()=>{idx++;next()};}
   function fillGaps(it){let i=0;return it.prompt.replace(/___/g,()=>((it.gaps[i++]||[''])[0]))}
@@ -5451,7 +5471,7 @@ document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#/"]');
 function route(){document.onkeydown=null;main().onclick=null;main().onkeydown=null;stopSay();
   let h=CUR||'home';const [r,...args]=h.split('/');
   $$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.r===r||(r==='unit'&&a.dataset.r==='path')));
-  (R[r]||R.home)(...args);window.scrollTo(0,0);drawer(false);mbarTitle();}
+  (R[r]||R.home)(...args);window.scrollTo(0,0);drawer(false);mbarTitle();try{watchPig();ensurePig()}catch(e){}}
 window.addEventListener('hashchange',()=>{const h=decR(location.hash.slice(1));if(h&&h!==CUR){CUR=h;route()}});
 /* mobile: top bar with ☰ and a slide-in menu from the left */
 const MOB=window.matchMedia?matchMedia('(max-width:860px)'):{matches:false,addEventListener(){}};
@@ -5534,6 +5554,49 @@ R.home=function(){
   const cb=$('#contBtn');if(cb)cb.onclick=()=>nav('#/unit/'+ct.u.id+'/'+ct.tab);};
 function backupNag(){const lb=S.lastBackup;if(lb&&daysBetween(lb,today())<7)return '';return `<div class="fb warn small">${L('Ihr Fortschritt wird im Browser gespeichert.','Your progress is stored in the browser.')} ${lb?L('Letztes Backup: '+lb+'.','Last backup: '+lb+'.'):L('Noch kein Backup.','No backup yet.')} <a href="#" onclick="event.preventDefault();backupNow()">💾 Jetzt sichern</a></div>`}
 function catStats(){const m={};for(const e of S.errors){const c=m[e.cat]=m[e.cat]||{cat:e.cat,open:0,total:0};c.total+=e.count||1;if(!e.closed)c.open++}return Object.values(m).sort((a,b)=>b.open-a.open||b.total-a.total)}
+
+/* Rüssli on every learning screen */
+function qPig(m){const q=$('.qhead .rs-q');if(q&&pigOn()&&PIGGY[m]){q.src=PIGGY[m];q.dataset.mood=m}}
+function pageMood(){const [r,a1,a2]=(CUR||'home').split('/');
+  const M=(m,de,en)=>[m,de,en];
+  switch(r){
+  case 'path':{const l=a1||currentLevel(),p=Math.round(levelProg(l)*100),cu=currentUnit();
+    if(p>=100)return M('level',`${l} ist komplett geschafft! Weiter mit dem nächsten Niveau.`,`${l} is fully completed! On to the next level.`);
+    return M('encourage',`${l}: ${p} % geschafft.${cu&&cu.level===l?` Als Nächstes: „${cu.title}“.`:''} Sie können jede Einheit öffnen.`,`${l}: ${p} % done.${cu&&cu.level===l?` Next up: “${cu.title}”.`:''} You can open any unit.`)}
+  case 'unit':{const u=unitById(a1);if(!u)return null;const st=S.units[u.id]||{},tab=a2||'gram',b=Math.round((st.best||0)*100);
+    if(tab==='exs')return M('encourage','Tippen Sie auf 🔊, hören Sie zu und sprechen Sie jeden Satz laut nach – so lernen Sie Aussprache und Satzbau zugleich.','Tap 🔊, listen and repeat every sentence out loud – that trains pronunciation and sentence structure at once.');
+    if(tab==='voc')return M('happy','Neue Wörter! Mit ☆ merken Sie sich schwierige Wörter für später.','New words! Use ☆ to save tricky words for later.');
+    if(tab==='prac'){if(b>=80)return M('happy',`Schon bestanden (${b} %). Eine weitere Runde festigt das Gelernte.`,`Already passed (${b} %). Another round makes it stick.`);
+      if(st.att>0)return M('encourage',`Letztes Mal: ${b} %. Ab 80 % ist die Einheit geschafft – Sie schaffen das!`,`Last time: ${b} %. 80 % completes the unit – you can do it!`);
+      return M('excited','Bereit? Jetzt wird geübt! Ab 80 % ist die Einheit geschafft.','Ready? Time to practise! 80 % completes the unit.')}
+    return M('reminder','Lesen Sie die Regeln in Ruhe und sprechen Sie die Beispiele laut mit.','Read the rules calmly and say the examples out loud.')}
+  case 'test':return M('concerned','Niveautest: Nehmen Sie sich Zeit und lesen Sie jede Aufgabe genau. Ab 80 % ist das Niveau bestanden.','Level test: take your time and read every task carefully. 80 % passes the level.');
+  case 'vocab':case 'deck':{const due=vocabDue().length;
+    if(r==='deck')return M('happy','Tippen Sie auf 🔊 zum Anhören und auf ☆ zum Merken.','Tap 🔊 to listen and ☆ to save a word.');
+    if(due>=40)return M('disappointed',`${due} Wörter sind fällig – bitte zuerst wiederholen, sonst gehen sie verloren.`,`${due} words are due – please review first, or they will slip away.`);
+    if(due>0)return M('reminder',`${due} Wörter sind heute fällig. Kurz wiederholen?`,`${due} words are due today. Quick review?`);
+    return M('happy','Alle Wiederholungen erledigt! Zeit für neue Wörter.','All reviews done! Time for new words.')}
+  case 'saved':return M('happy',`${(S.saved||[]).length} gemerkte Wörter. Üben Sie sie ab und zu – so bleiben sie hängen.`,`${(S.saved||[]).length} saved words. Practise them now and then – that is how they stick.`);
+  case 'listen':return a1?M('encourage','Erst ohne Text hören, dann die Fragen, dann Lückentext und Transkript.','Listen without the text first, then the questions, then the gap text and transcript.')
+      :M('encourage','Hören Sie jeden Tag ein bisschen – das Ohr gewöhnt sich schnell an Hochdeutsch.','Listen a little every day – your ear gets used to Standard German quickly.');
+  case 'speak':return M('encourage','Sprechen Sie laut – Fehler sind erlaubt. In der Prüfung zählt, dass Sie reden.','Speak out loud – mistakes are allowed. In the exam, what counts is that you talk.');
+  case 'write':return M('reminder','Schreiben Sie ganze Sätze und prüfen Sie Verbposition und Endungen.','Write full sentences and check verb position and endings.');
+  case 'read':return M('reminder','Erst den ganzen Text überfliegen, dann die Details lesen.','Skim the whole text first, then read for detail.');
+  case 'exam':return M('encourage','Einbürgerung: Sie schaffen das! Trainieren Sie die Prüfungsteile regelmässig.','Naturalisation: you can do it! Practise the exam parts regularly.');
+  case 'mock':return M('concerned','Prüfungszeit! Lesen Sie jede Aufgabe genau und achten Sie auf die Uhr.','Exam time! Read each task carefully and keep an eye on the clock.');
+  case 'ref':return M('reminder','Nachschlagen ist erlaubt: Hier finden Sie alle Tabellen.','Looking things up is allowed: all tables are here.');
+  case 'settings':return M('greet','Hier stellen Sie die App ein – auch, ob ich mitkomme.','Set up the app here – including whether I come along.');
+  case 'errors':return M('concerned','Fehler sind zum Lernen da. Üben wir sie weg!','Mistakes are there to learn from. Let us practise them away!');
+  }return null}
+function ensurePig(){if(!pigOn())return;const m=main();if(!m)return;
+  const qh=$('.quiz .qhead',m);
+  if(qh){if(!$('.rs-q',qh)){const mood=$('.qcard.flash',m)?'happy':($('#mic',m)||$('#dchk',m))?'encourage':'concerned';qh.insertAdjacentHTML('beforeend',pigImg(mood,'rs-q'))}return}
+  const res=$('.quiz .qcard.result',m);
+  if(res){if(!$('.rs-row',res)){const pc=parseInt(($('.big',res)||{}).textContent)||0;const r=resultMood(pc/100,null);res.insertAdjacentHTML('afterbegin',pigSay(r[0],r[1],r[2],'rs-res'))}return}
+  if($('.rs-row',m))return;const pm=pageMood();if(!pm)return;const html=pigSay(pm[0],pm[1],pm[2],'rs-page');
+  const h1=$('h1',m);let at=h1;if(h1&&h1.nextElementSibling&&h1.nextElementSibling.classList.contains('sub'))at=h1.nextElementSibling;
+  if(!at)at=$('.mk-head',m);if(at)at.insertAdjacentHTML('afterend',html);else m.insertAdjacentHTML('afterbegin',html)}
+let PIGOBS=null;function watchPig(){const m=main();if(!m||PIGOBS)return;let t=0;PIGOBS=new MutationObserver(()=>{clearTimeout(t);t=setTimeout(ensurePig,40)});PIGOBS.observe(m,{childList:true})}
 
 /* BOINK-ECKE: boink the snout any time */
 R.boink=function(){const ct=continueTarget(),best=S.boinkBest||0;
@@ -5922,6 +5985,9 @@ R.ref=function(){main().innerHTML=`<h1>Grammatik-Referenz</h1><p class="sub">All
   draw('');$('#rs').oninput=e=>draw(e.target.value)};
 
 /* SETTINGS */
+function accListHTML(){const rows=[];for(const k in S.accepted)(S.accepted[k]||[]).forEach(a=>{const m=(S.accMeta||{})[k+'|'+a]||{};rows.push({k,a,m})});
+  return `<div class="card" style="margin-top:12px"><h3>Als korrekt gespeicherte Antworten</h3><p class="small muted">${LH('Antworten, die Sie mit „Meine Antwort war auch korrekt“ akzeptiert haben. Mit ✕ entfernen – dann zählen sie wieder als falsch.','Answers you accepted with “My answer was also correct”. Remove with ✕ – they then count as wrong again.')}</p>
+  ${rows.length?`<table class="t acc">${rows.reverse().map(r=>`<tr><td><b>${esc(r.a)}</b>${r.m.exp?`<div class="small muted">${L('erwartet','expected')}: ${esc(r.m.exp)}</div>`:''}${r.m.p?`<div class="small muted">${esc(r.m.p)}</div>`:''}</td><td class="small muted nw">${r.m.d||''}</td><td><button class="sm ghost" data-accdel="${esc(r.k)}" data-acca="${esc(r.a)}" title="Entfernen">✕</button></td></tr>`).join('')}</table>`:`<p class="small muted">${L('Noch keine.','None yet.')}</p>`}</div>`}
 R.settings=function(){const s=S.settings;loadVoices();
   main().innerHTML=`<h1>Einstellungen</h1><div class="card" style="margin-bottom:12px"><h3>Sprache der Oberfläche</h3>${langSwitch()}</div>
   <div class="card"><h3>Sprachausgabe</h3><div class="row"><select id="vo" style="max-width:420px"><option value="">Automatisch (beste deutsche Stimme)</option>${VOICES.map(v=>`<option value="${esc(v.voiceURI)}" ${v.voiceURI===s.voice?'selected':''}>${esc(v.name)} (${v.lang})</option>`).join('')}</select><button id="vt">▶ Test</button></div>
@@ -5940,7 +6006,7 @@ R.settings=function(){const s=S.settings;loadVoices();
    <label class="row small"><input type="checkbox" id="sno" ${s.sound===true?'checked':''}> Töne bei richtig / falsch</label>
    <label class="row small"><input type="checkbox" id="bso" ${s.boinkSound!==false?'checked':''}> 🐽 Boink-Ton</label>
    <div class="row"><button class="sm" id="fxt">✨ Animation testen</button></div></div>
-  <div class="card" style="margin-top:12px"><h3>Daten sichern</h3><p class="small muted">${L('Der Fortschritt liegt im Browser-Speicher dieses Computers. Letztes Backup: '+(S.lastBackup||'nie')+'.','Progress is stored in this device’s browser. Last backup: '+(S.lastBackup||'never')+'.')}</p>
+  ${accListHTML()}<div class="card" style="margin-top:12px"><h3>Daten sichern</h3><p class="small muted">${L('Der Fortschritt liegt im Browser-Speicher dieses Computers. Letztes Backup: '+(S.lastBackup||'nie')+'.','Progress is stored in this device’s browser. Last backup: '+(S.lastBackup||'never')+'.')}</p>
    ${BK.ok?`<p class="small">Backup-Ordner: <b id="bkn">${BK.h?esc(BK.h.name):'nicht gewählt'}</b> <button class="sm" id="bkp">📁 Ordner wählen</button><br><span class="muted">Wählen Sie einmal den Ordner „Backup Data“. Danach wird jedes Backup dort gespeichert – und einmal pro Tag automatisch.</span></p>`:`<p class="small muted">${IN_VIEWER?'Online-Version: '+(navigator.canShare?'Beim Backup öffnet sich „Teilen“: pCloud wählen → Ordner „Backup Data“.':'Das Backup wird heruntergeladen – bitte in den Ordner „Backup Data“ verschieben.'):(navigator.canShare?'Handy: Beim Backup öffnet sich „Teilen“ – pCloud wählen und den Ordner „Backup Data“ angeben.':'Dieser Browser kann keinen Ordner direkt beschreiben. Das Backup landet in „Downloads“ – bitte in den Ordner „Backup Data“ verschieben.')}</p>`}
    <div class="row"><button class="pri" id="ex">⬇ Backup exportieren (.json)</button><label class="btn">⬆ Backup importieren<input type="file" id="im" accept=".json" style="display:none"></label><button id="md">⬇ Fehlerprotokoll + Fortschritt (.md)</button><span class="spacer"></span><button id="rs" style="color:var(--bad)">Alles zurücksetzen</button></div></div>`;
     $('#vo').onchange=e=>{s.voice=e.target.value;save()};$('#vt').onclick=()=>say('Grüezi! Ich lerne Deutsch, weil ich mich in der Schweiz einbürgern lassen möchte.');
@@ -5950,7 +6016,7 @@ R.settings=function(){const s=S.settings;loadVoices();
   $('#th').onchange=e=>{s.theme=e.target.value;applyTheme();save()};
   $('#ex').onclick=async()=>{await backupNow();R.settings()};
   if(BK.ok){BK.load().then(h=>{const n=$('#bkn');if(n&&h)n.textContent=h.name});$('#bkp').onclick=async()=>{const h=await BK.pick();if(h){$('#bkn').textContent=h.name;if(await BK.write(true))toast('💾 Backup gespeichert in „'+h.name+'“.');R.settings()}}}
-  $('#fxo').onchange=e=>{s.fx=e.target.checked;save()};$('#pgo').onchange=e=>{s.pig=e.target.checked;save();brandPig()};$('#sno').onchange=e=>{s.sound=e.target.checked;save();if(s.sound)FX.tone([660,880],0.12)};$('#bso').onchange=e=>{s.boinkSound=e.target.checked;save();if(s.boinkSound)FX.boing()};
+  $('#fxo').onchange=e=>{s.fx=e.target.checked;save()};$$('[data-accdel]').forEach(b=>b.onclick=()=>{const k=b.dataset.accdel,a=b.dataset.acca,l=S.accepted[k]||[],i=l.indexOf(a);if(i>=0)l.splice(i,1);if(!l.length)delete S.accepted[k];if(S.accMeta)delete S.accMeta[k+'|'+a];save();toast('Entfernt – diese Antwort zählt wieder als falsch.');const y=scrollY;R.settings();scrollTo(0,y)});$('#pgo').onchange=e=>{s.pig=e.target.checked;save();brandPig()};$('#sno').onchange=e=>{s.sound=e.target.checked;save();if(s.sound)FX.tone([660,880],0.12)};$('#bso').onchange=e=>{s.boinkSound=e.target.checked;save();if(s.boinkSound)FX.boing()};
   $('#fxt').onclick=()=>{FX.confetti(1.2);FX.banner('Super gemacht!','So sieht eine Feier aus.','🎉','excited');FX.tone([523,659,784,1047],0.15)};
   $('#im').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.settings||!d.units)throw 0;S=d;load2();save();toast('Backup importiert.');route()}catch(x){toast('Ungültige Backup-Datei.')}};r.readAsText(f)};
   $('#md').onclick=()=>download('german-trainer-report-'+today()+'.md',mdReport(),'text/markdown');
@@ -5974,7 +6040,7 @@ function profName(){return ''}
 /* single account. Earlier versions had two profiles (p1/p2) on a device: take over the one with the most progress */
 function loadProfilesLocal(){try{if(lsGet(KEY))return;let best=null,bs=-1;for(const id of ['p1','p2']){const raw=lsGet(KEY+'.'+id);if(!raw)continue;try{const d=JSON.parse(raw);const sc=Object.keys(d.history||{}).length*1000+(d.ts||0)/1e9;if(sc>bs){bs=sc;best=raw}}catch(e){}}
   if(best){lsSet(KEY,best)}}catch(e){}}
-const APP_VER='2026-11-18c';
+const APP_VER='2026-11-18e';
 function isPinned(){return lsGet('dt.pin')==='1'}
 /* keep the pinned bar on screen even where position:fixed is not honoured (phone keyboard open, zoom, some in-app viewers):
    measure where it really is and shift it back into the visible area */
